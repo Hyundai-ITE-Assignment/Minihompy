@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hyundai.minihompy.dao.BoardDAO">
+
+	<select id="selectByPage" parameterType="Pager" resultType="BoardDTO">
+		SELECT rnum, bno, title, regdate, name, hitcount
+		FROM (
+			SELECT ROWNUM as rnum, bno, title, regdate, name, hitcount
+			FROM (
+				SELECT bno, title, regdate, name, hitcount
+				FROM board
+				ORDER BY bno DESC
+			)
+			WHERE rownum &lt;= #{endRowNo}
+		)
+		WHERE rnum &gt;= #{startRowNo}
+	</select>
+
+	<select id="count" resultType="int">
+		SELECT count(*) FROM board
+	</select>
+
+	<select id="getDetail" parameterType="long"
+		resultType="BoardDTO">
+		SELECT bno, title, name, regdate, content,
+		hitcount,
+		attachoname,
+		attachsname, attachtype
+		FROM board
+		WHERE
+		bno=#{bno}
+	</select>
+
+	<insert id="insert" parameterType="BoardDTO">
+		<selectKey order="BEFORE" resultType="long"
+			keyProperty="bno">
+			SELECT sq_board.nextval FROM dual
+		</selectKey>
+		<if test="attachoname == null">
+			INSERT INTO board(bno, id, name, title, content, regdate,
+			password, hitcount)
+			VALUES(#{bno}, #{id}, #{name}, #{title},
+			#{content}, sysdate, #{password}, 0)
+		</if>
+		<if test="attachoname != null">
+			INSERT INTO board(bno, id, name, title, content, regdate,
+			password, hitcount, attachoname, attachsname, attachtype)
+			VALUES(#{bno}, #{id}, #{name}, #{title}, #{content},
+			sysdate,
+			#{password}, 0, #{attachoname}, #{attachsname},
+			#{attachtype})
+		</if>
+
+	</insert>
+
+	<update id="update" parameterType="BoardDTO">
+		<if test="attachoname == null">
+			UPDATE board
+			SET
+			name = #{name},
+			title = #{title},
+			content=#{content}
+			WHERE bno=#{bno}
+		</if>
+		<if test="attachoname != null">
+			UPDATE board
+			SET
+			name = #{name},
+			title = #{title},
+			content=#{content},
+			attachoname=#{attachoname},
+			attachsname=#{attachsname},
+			attachtype=#{attachtype}
+			WHERE bno=#{bno}
+		</if>
+
+	</update>
+	
+	<delete id="delete" parameterType="long">
+		DELETE board
+		WHERE bno=#{bno}
+	</delete>
+
+	<update id="updateHitcount" parameterType="long">
+		UPDATE board
+		SET
+		hitcount = hitcount + 1
+		WHERE bno=#{bno}
+	</update>
+
+
+</mapper>

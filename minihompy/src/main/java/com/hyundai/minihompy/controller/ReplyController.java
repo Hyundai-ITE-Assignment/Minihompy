@@ -3,9 +3,7 @@ package com.hyundai.minihompy.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,7 +18,6 @@ import com.hyundai.minihompy.service.ReplyService;
 import lombok.extern.log4j.Log4j2;
 
 @RestController
-@Controller
 @Log4j2
 @RequestMapping("/replies")
 public class ReplyController {
@@ -28,67 +25,52 @@ public class ReplyController {
 	@Autowired
 	private ReplyService replyService;
 	
-	@GetMapping("list/{bno}")
-	public ResponseEntity<List<ReplyDTO>> list(@PathVariable("bno") int bno) {
-		ResponseEntity<List<ReplyDTO>> entry = null;
-		
+	@GetMapping("/{bno}")
+	public List<ReplyDTO> list(@PathVariable("bno") int bno) {
+		List<ReplyDTO> list = null;
 		try {
-			entry = new ResponseEntity<List<ReplyDTO>>(replyService.getList(bno), HttpStatus.OK);
-			log.info(entry);
+			list = replyService.getList(bno);
+			log.info(list);
 		} catch (Exception e) {
 			e.printStackTrace();
-			entry = new ResponseEntity<List<ReplyDTO>>(HttpStatus.BAD_REQUEST);
 		}
 		
-		return entry;
+		return list;
 	}
 	
 	@PostMapping("")
-	public ResponseEntity<String> insert(@RequestBody ReplyDTO dto) {
-		ResponseEntity<String> entry = null;
-		
+	public String insert(@RequestBody ReplyDTO dto) {
 		try {
 			dto.setId("user1");
+			dto.setReplyer("김땡땡");
 			replyService.insert(dto);
-			entry = new ResponseEntity<String>("SUCCESS", HttpStatus.OK);
+			return "SUCCESS";
 		} catch (Exception e) {
 			e.printStackTrace();
-			entry = new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+			return null;
 		}
-		
-		return entry;
 	}
 	
 	@RequestMapping(value = "/{rno}", method = { RequestMethod.PUT, RequestMethod.PATCH })
-	public ResponseEntity<String> update(@PathVariable("rno") int rno, @RequestBody ReplyDTO dto) {
-		ResponseEntity<String> entry = null;
-		
+	public String update(@PathVariable("rno") int rno, @RequestBody ReplyDTO dto) {
 		try {
 			dto.setRno(rno);
 			replyService.update(dto);
-			log.info("update");
-			entry = new ResponseEntity<String>("SUCCESS", HttpStatus.OK);
+			return "SUCCESS";
 		} catch (Exception e) {
 			e.printStackTrace();
-			entry = new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+			return null;
 		}
-		
-		return entry;
 	}
 	
-	@RequestMapping(value = "/{rno}", method = RequestMethod.DELETE)
-	public ResponseEntity<String> delete(@PathVariable("rno") int rno) {
-		ResponseEntity<String> entry = null;
-		
+	@DeleteMapping("/{rno}")
+	public String delete(@PathVariable("rno") int rno) {
 		try {
 			replyService.delete(rno);
-			log.info("delete");
-			entry = new ResponseEntity<String>("SUCCESS", HttpStatus.OK);
+			return "SUCCESS";
 		} catch (Exception e) {
 			e.printStackTrace();
-			entry = new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+			return null;
 		}
-		
-		return entry;
 	}
 }

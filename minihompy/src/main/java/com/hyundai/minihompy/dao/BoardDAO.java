@@ -6,18 +6,23 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 
 import com.hyundai.minihompy.domain.BoardDTO;
+import com.hyundai.minihompy.domain.Pager;
 
 @Mapper
 public interface BoardDAO {
 	
-	void insert(BoardDTO boardDTO) throws SQLException;
+	public List<BoardDTO> selectByPage(Pager pager) throws SQLException;
 	
-	List<BoardDTO> getList() throws SQLException;
+	public int count() throws SQLException;
 	
-	BoardDTO getDetail(long bno) throws SQLException;
+	public BoardDTO getDetail(long bno) throws SQLException;
 	
-	int delete(long bno) throws SQLException;
+	public void insert(BoardDTO boardDTO) throws SQLException;
 	
-	int update(BoardDTO boardDTO) throws SQLException;
+	public int update(BoardDTO boardDTO) throws SQLException;
+
+	public int delete(long bno) throws SQLException;
+	
+	public int updateHitcount(long bno) throws SQLException;
 	
 }

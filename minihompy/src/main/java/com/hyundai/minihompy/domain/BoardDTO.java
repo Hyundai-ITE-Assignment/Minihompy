@@ -2,13 +2,15 @@ package com.hyundai.minihompy.domain;
 
 import java.util.Date;
 
+import org.springframework.web.multipart.MultipartFile;
+
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
+@Data
 @Getter
 @Setter
-@ToString
 public class BoardDTO {
 	private long bno;
 	private String id;
@@ -16,6 +18,10 @@ public class BoardDTO {
 	private String title;
 	private String content;
 	private Date regdate;
-	private int readcount;
 	private String password;
+	private MultipartFile attach;
+	private String attachoname;
+	private String attachsname;
+	private String attachtype;
+	private int hitcount;
 }

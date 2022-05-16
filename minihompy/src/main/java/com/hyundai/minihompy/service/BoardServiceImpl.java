@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.hyundai.minihompy.dao.BoardDAO;
 import com.hyundai.minihompy.domain.BoardDTO;
+import com.hyundai.minihompy.domain.Pager;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -16,28 +17,22 @@ public class BoardServiceImpl implements BoardService {
 
 	@Autowired
 	private BoardDAO boardDAO;
+
+	@Override
+	public List<BoardDTO> getList(Pager pager) throws Exception {
+		try {
+			return boardDAO.selectByPage(pager);
+		} catch (Exception e) {
+			log.info(e.getMessage());
+			throw e;
+		}
+	}
 	
 	@Override
-	public void insert(BoardDTO boardDTO) throws Exception {
-		try {
-			boardDAO.insert(boardDTO);
-			log.info("게시글이 등록되었습니다.");
-		} catch (Exception e) {
-			log.info(e.getMessage());
-			throw e;
-		}
+	public int getCount() throws Exception {
+		return boardDAO.count();
 	}
-
-	@Override
-	public List<BoardDTO> getList() throws Exception {
-		try {
-			return boardDAO.getList();
-		} catch (Exception e) {
-			log.info(e.getMessage());
-			throw e;
-		}
-	}
-
+	
 	@Override
 	public BoardDTO getDetail(long bno) throws Exception {
 		try {
@@ -53,11 +48,10 @@ public class BoardServiceImpl implements BoardService {
 	}
 
 	@Override
-	public void delete(long bno) throws Exception {
+	public void insert(BoardDTO boardDTO) throws Exception {
 		try {
-			if(boardDAO.delete(bno) == 0) {
-				throw new RuntimeException("비밀번호가 일치하지 않습니다.");
-			}
+			boardDAO.insert(boardDTO);
+			log.info("게시글이 등록되었습니다.");
 		} catch (Exception e) {
 			log.info(e.getMessage());
 			throw e;
@@ -75,5 +69,24 @@ public class BoardServiceImpl implements BoardService {
 			throw e;
 		}
 	}
+	
+	@Override
+	public void delete(long bno) throws Exception {
+		try {
+			boardDAO.delete(bno);
+		} catch (Exception e) {
+			log.info(e.getMessage());
+			throw e;
+		}
+	}
+
+	
+	@Override
+	public void updateHitcount(long bno) throws Exception {
+		boardDAO.updateHitcount(bno);
+		
+	}
+
+	
 
 }

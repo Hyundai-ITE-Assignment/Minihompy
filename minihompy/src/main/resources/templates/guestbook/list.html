@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th=http://www.thymeleaf.org
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<th:block th:replace="~{common/layout::setContent(~{this::content})}">
+	<th:block th:fragment="content">
+		<!-- 방명록 목록 시작 -->
+		<h3 class="p-3">방명록 리스트</h3>
+
+		<div class="row text-center" width="100%" style="margin:0 auto">
+			<div class="col-md-3 m-1" id="id">
+				<img th:src="@{/images/profile_img.png}" width="100%"
+					class="d-inline-block center-block">
+				김땡땡
+			</div>
+			<textarea class="col-md-7" name="booktext"
+				id='newBookText' rows=10></textarea>
+			<button class="btn btn-info col-md-1 ml-3"
+				id="bookAddBtn">등록</button>
+		</div>
+
+		<!-- 방명록 리스트 -->
+		<ul id="books" class="mt-5" th:if="${not #lists.isEmpty(list)}" th:each="dto: ${list}"
+			style="list-style-type: none; font-size: 1.1rem">
+			<li id="item">
+				<div class="row pt-3 pb-3"  style="background-color: #E0E0E0">
+					<div class="col-md-7">
+						No.<span id="gno" th:text="${dto.gno}"></span>  [[${dto.name}]]
+						<span> ([[${#calendars.format(dto.regdate, 'yyyy-MM-dd HH:mm:ss')}]]) </span>
+					</div>
+					<div class="col-md-5">
+						<div class="float-right">
+							<button onclick="updateBook(this)" id="bookUpdateBtn">수정</button>
+							<button onclick="deleteBook(this)" id="bookDeleteBtn">삭제</button>
+						</div>
+					</div>
+				</div>
+				<div class="row p-3 bg-light">
+					<img th:src="@{/images/mini.jpg}"
+					class="d-inline-block center-block col-md-3">
+					<div class="p-3 col-md-8" id="bookContent" th:text="${dto.content}"></div>
+				</div>
+			</li>
+		</ul>
+
+		<div class="container row" style="float: none; margin: 100 auto;">
+			<div class="col-md-3" style="float: none; margin: 0 auto;">
+				<ul class="pagination">
+					<li th:if="${pager.startPageNo != 1}"><a
+						th:href="@{/guestbook(pageNo=${pager.startPageNo - 1})}"
+						class="m-3" style="font-size: 1.6rem"> &laquo; </a></li>
+					<th:block
+						th:with="start = ${pager.startPageNo}, end = ${pager.endPageNo}">
+						<li class="page-item"
+							th:with="start = ${pager.startPageNo}, end = ${pager.endPageNo}"
+							th:each="pageButton : ${#numbers.sequence(start, end)}"><a
+							class="page-link"
+							th:href="@{/guestbook?pageNo={page} (page = ${pageButton})}"
+							th:text=${pageButton}></a></li>
+					</th:block>
+					<li th:if="${pager.endPageNo != pager.totalPageNo}"><a
+						th:href="@{/guestbook(pageNo=${pager.endPageNo + 1})}" class="m-3"
+						style="font-size: 1.6rem"> &raquo; </a></li>
+				</ul>
+			</div>
+		</div>
+		<!-- 방명록 리스트 끝 -->
+	
+		<script th:inline="javascript">
+			  
+			  // 방명록 추가
+			  $("#bookAddBtn").on("click", function() {
+				  const bookText = $("#newBookText").val();
+				  
+				  const formData = new FormData();
+				  formData.append("content", bookText);
+				  $.ajax({
+						url: "[(@{/guestbook/insert})]",
+						/* headers: {Authorization:`Bearer ${sessionStorage.getItem("jwt")}`}, */
+						method: "post",
+						data: formData,
+						processData: false,
+						contentType: false,
+						cache: false
+					}).done((data) => {
+						console.log(data);
+						window.location.href = '/guestbook';
+					});
+			  })
+			  
+			  // 수정 버튼 클릭 시 수정 창 띄우기
+			  function updateBook(obj) {
+				  var li = $(obj).parent().parent().parent().parent(); // li
+				  var div = li.find("#bookContent");
+				  
+				  var newContent = document.createElement("textarea");
+				  newContent.setAttribute("id","newBookContent");
+				  newContent.setAttribute("class", "ml-3 col-md-7");
+				  newContent.innerHTML = div.text();
+				  var newBtn = document.createElement("button");
+				  newBtn.setAttribute("onclick", "updateNewBook(this)");
+				  newBtn.setAttribute("id", "updateBtn");
+				  newBtn.setAttribute("class", "btn btn-info ml-1, col-md-1");
+				  newBtn.innerHTML = "수정";
+				  
+				  var div2 = div.parent();
+				  div2.append(newContent);
+				  div2.append(newBtn);
+				  div.remove();
+				  
+			  }
+
+			  // 방명록 수정
+			  function updateNewBook(obj) {
+				  var li = $(obj).parent().parent(); // li
+				  var gno = li.find("#gno").text();
+				  var newContent = li.find("#newBookContent").val();
+				  
+				  const formData = new FormData();
+				  formData.append("gno", gno);
+				formData.append("content", newContent);
+				  $.ajax({
+						url: "[(@{/guestbook/update})]",
+						method: "put",
+						data : formData,
+						processData: false,
+						contentType: false,
+						cache: false
+					}).done((data) => {
+						console.log(data.bno);
+						window.location.href = '/guestbook?pageNo=1';
+					});
+			  }
+			  
+			  
+			  // 방명록 삭제
+			  function deleteBook(obj) {
+				  var li = $(obj).parent().parent().parent().parent(); // li
+				  var gno = li.find("#gno").text();
+				  $.ajax({
+					  	url : "[(@{/guestbook/})]" + gno,
+					  	method: "delete",
+						processData: false,
+						contentType: false,
+						cache: false
+					}).done((data) => {
+						console.log(data);
+						alert("삭제되었습니다.");
+						window.location.href = '/guestbook?pageNo=1';
+					});
+			  }
+			  
+			  $("#closeBtn").on("click", function() {
+				  $("#modDiv").hide("slow");
+			  });
+			  
+			           
+		</script>
+	</th:block>
+</th:block>
+</html>

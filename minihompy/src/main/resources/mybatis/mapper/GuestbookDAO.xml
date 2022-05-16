@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hyundai.minihompy.dao.GuestbookDAO">
+
+	<select id="selectByPage" parameterType="Pager" resultType="GuestbookDTO">
+		SELECT rnum, gno, content, regdate, name
+		FROM (
+			SELECT ROWNUM as rnum, gno, content, regdate, name
+			FROM (
+				SELECT gno, content, regdate, name
+				FROM guestbook
+				ORDER BY gno DESC
+			)
+			WHERE rownum &lt;= #{endRowNo}
+		)
+		WHERE rnum &gt;= #{startRowNo}
+	</select>
+
+	<select id="count" resultType="int">
+		SELECT count(*) FROM guestbook
+	</select>
+
+	<insert id="insert" parameterType="GuestbookDTO">
+		<selectKey order="BEFORE" resultType="long"
+			keyProperty="gno">
+			SELECT sq_guestbook.nextval FROM dual
+		</selectKey>
+		
+			INSERT INTO guestbook(gno, id, name, content, regdate)
+			VALUES(#{gno}, #{id}, #{name}, #{content}, sysdate)
+
+	</insert>
+
+	<update id="update" parameterType="GuestbookDTO">
+			UPDATE guestbook
+			SET
+			content=#{content}
+			WHERE gno=#{gno}
+
+	</update>
+	
+	<delete id="delete" parameterType="long">
+		DELETE guestbook
+		WHERE gno=#{gno}
+	</delete>
+
+</mapper>
