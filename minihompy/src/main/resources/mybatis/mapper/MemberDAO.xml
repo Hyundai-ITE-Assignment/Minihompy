@@ -3,7 +3,7 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hyundai.minihompy.dao.MemberDAO">
 
-  <resultMap type="com.hyundai.minihompy.domain.MemberDTO" id="memberMap">
+  <resultMap type="MemberDTO" id="memberMap">
     <id property="id" column="id"/>
     <result property="name" column="name"/>
     <result property="password" column="password"/>
@@ -16,7 +16,7 @@
     </collection>
   </resultMap>
 
-  <resultMap type="com.hyundai.minihompy.domain.MemberRoleSet" id="authMap">
+  <resultMap type="MemberRoleSet" id="authMap">
     <result property="member_id" column="member_id"/>
     <result property="role_set" column="role_set"/>
   </resultMap>

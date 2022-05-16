@@ -3,6 +3,8 @@
   
 <configuration>
 	<typeAliases>
+		<typeAlias type="com.hyundai.minihompy.domain.MemberRoleSet" alias="MemberRoleSet"/>
+		<typeAlias type="com.hyundai.minihompy.domain.MemberDTO" alias="MemberDTO"/>
 		<typeAlias type="com.hyundai.minihompy.domain.BoardDTO" alias="BoardDTO"/>
 		<typeAlias type="com.hyundai.minihompy.domain.ReplyDTO" alias="ReplyDTO"/>
 		<typeAlias type="com.hyundai.minihompy.domain.GuestbookDTO" alias="GuestbookDTO"/>
