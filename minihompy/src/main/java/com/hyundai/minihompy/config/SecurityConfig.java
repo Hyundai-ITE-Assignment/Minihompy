@@ -61,7 +61,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			.antMatchers("/members/authenticate").permitAll() //해당 url은 인증없이 항상 허용한다.
 			.antMatchers("/members/signup").permitAll()
 			.antMatchers("/api/authenticate").permitAll()
-			.anyRequest().authenticated() //그 밖에 접근은 인증을 받아야 한다.
+			.antMatchers("/*").permitAll()
+//			.anyRequest().authenticated() //그 밖에 접근은 인증을 받아야 한다.
 		
 			.and()
 			.apply(new JwtSecurityConfig(tokenProvider)); //Jwtfilter를 addFilterBefore로 등록했던 JwtSecurityConfig 클래스도 적용
