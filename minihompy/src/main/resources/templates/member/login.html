@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cyworld</title>
+  <link rel="stylesheet"
+        th:href="@{/bootstrap-4.6.0-dist/css/bootstrap.min.css}" />
+  <script th:src="@{/jquery/jquery-3.5.1.min.js}"></script>
+  <script th:src="@{/bootstrap-4.6.0-dist/js/bootstrap.bundle.min.js}"></script>
+  <link rel="stylesheet" th:href="@{/css/app.css}" />
+</head>
+
+<body>
+
+<div class="d-flex flex-column vh-100">
+  <nav
+      class="navbar navbar-expand-sm font-weight-bold justify-content-between">
+    <a class="navbar-brand" href="/"> <img
+        th:src="@{/images/logo.png}" height="40"
+        class="d-inline-block align-top">
+    </a>
+  </nav>
+
+
+    <div class="container centered text-center">
+      <form class="form-signin" id="loginForm">
+        <h1 class="h3 mb-3 font-weight-normal">[[${login_message}]]</h1>
+
+        <label for="username" class="sr-only">ID</label>
+        <input type="text" id="username" name="username" class="form-control" placeholder="ID" required="" autofocus="">
+
+        <label for="password" class="sr-only">Password</label>
+        <input type="password" id="password" name="password" class="form-control" placeholder="Password" required="">
+
+        <div class="checkbox mb-3">
+          <label><input type="checkbox" value="remember-me"> Remember me</label>
+        </div>
+
+        <div align="center" th:if="${param.error}">
+          <p style="font-size: 40; color: #FF1C19;">아이디, 비밀번호가 일치하지 않습니다. 다시 로그인 해주세요</p>
+        </div>
+
+<!--        <button class="btn btn-primary btn-block" type="submit">Sign in</button>-->
+        <a href="javascript:login()" class="btn btn-info btn-sm">싸이월드 로그인</a>
+      </form>
+      <script th:inline="javascript">
+        function login() {
+          var username = $("#loginForm [name=username]").val();
+          alert(username);
+          var password = $("#loginForm [name=password]").val();
+          alert(password);
+          $.ajax({
+            url: "[(@{/api/authenticate})]",
+            method: "post",
+            data: JSON.stringify({username, password}),
+            contentType: "application/json",
+            processData: false //data를 QueryString으로 표현하지 않음
+          }).done((data) => {
+            console.log(data);
+            sessionStorage.setItem("id", data.id);
+            sessionStorage.setItem("jwt", data.jwt);
+            window.location.href='/';
+          });
+        }
+
+        // function login() {
+        //   var member = {
+        //     username: 		$("#loginForm [name=username]").val(),
+        //     password: 	$("#loginForm [name=password]").val(),
+        //   };
+        //
+        //   $.ajax({
+        //     url: "[(@{/api/authenticate})]",
+        //     method: "post",
+        //     data: JSON.stringify(member),
+        //     contentType: "application/json",
+        //     processData: false //data를 QueryString으로 표현하지 않음
+        //
+        //   }).done((data) => {
+        //     console.log(data);
+        //   });
+        // }
+      </script>
+
+    </div>
+
+</div>
+</body>
+</html>

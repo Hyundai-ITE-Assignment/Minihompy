@@ -1,11 +1,19 @@
 package com.hyundai.minihompy.controller;
 
+import com.hyundai.minihompy.domain.MemberDTO;
+import com.hyundai.minihompy.service.MemberService;
+import java.sql.SQLException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.hyundai.minihompy.domain.BoardDTO;
@@ -25,7 +33,10 @@ public class WebController {
 
 	@Autowired
 	private GuestbookService guestbookService;
-	
+
+	@Autowired
+	private MemberService memberService;
+
 	// 게시글 목록 조회
 	@GetMapping("/board")
 	public String getList(@RequestParam(defaultValue = "1") int pageNo, Model model) throws Exception {
@@ -109,4 +120,36 @@ public class WebController {
 			throw e;
 		}
 	}
+
+	// 회원 가입 후 로그인 창으로 이동하기
+	@PreAuthorize("permitAll()") //"hasRole('ADMIN')"
+	@PostMapping(path = "/members/signup")
+	public String signUp(@RequestBody MemberDTO memberDTO) throws SQLException {
+		memberService.insertMember(memberDTO);
+		return "member/login";
+	}
+
+	@GetMapping(path = "/members/info")
+	public String memberInfo(@AuthenticationPrincipal
+		User authentication,
+		Model model
+	){
+		log.info("로그인한 아이디 : "+authentication.getUsername());
+		MemberDTO memberDTO = this.memberService.findById(authentication.getUsername(), 0);
+		model.addAttribute("memberDTO", memberDTO);
+		log.info(memberDTO);
+		return "member/info";
+	}
+
+
+	@GetMapping("/members/signup")
+	public String getSignupPage(){
+		return "member/signup";
+	}
+
+	@GetMapping("/members/login")
+	public String getLogin(){
+		return "member/login";
+	}
+
 }

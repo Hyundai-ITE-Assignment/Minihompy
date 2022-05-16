@@ -4,6 +4,8 @@ import com.hyundai.minihompy.domain.LoginDto;
 import com.hyundai.minihompy.domain.TokenDto;
 import com.hyundai.minihompy.security.jwt.JwtFilter;
 import com.hyundai.minihompy.security.jwt.TokenProvider;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.http.HttpHeaders;
@@ -33,7 +35,10 @@ public class AuthController {
   }
 
   @PostMapping("/authenticate")
-  public ResponseEntity<TokenDto> authorize(@RequestBody LoginDto loginDto) {
+  public Map<String, String> authorize(@RequestBody LoginDto loginDto) {
+
+    log.info("==============찾으려는 회원 아이디 : "+loginDto.getUsername()+"==========================");
+    log.info("==============찾으려는 비밀번호 : "+loginDto.getPassword()+"==========================");
 
     UsernamePasswordAuthenticationToken authenticationToken =
       new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword());
@@ -46,7 +51,12 @@ public class AuthController {
     HttpHeaders httpHeaders = new HttpHeaders();
     httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + jwt);
 
-    return new ResponseEntity<>(new TokenDto(jwt), httpHeaders, HttpStatus.OK);
+    Map<String, String> map = new HashMap<>();
+    map.put("result", "success");
+    map.put("id", loginDto.getUsername());
+    map.put("jwt", jwt);
+
+    return map;
   }
 
 }
