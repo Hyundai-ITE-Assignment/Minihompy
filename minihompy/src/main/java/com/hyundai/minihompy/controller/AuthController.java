@@ -22,6 +22,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/*************************************************************
+ 파일명: AuthController.java
+ 기능: 토큰 발급 Controller
+ 작성자: 유지훈, 박주영
+
+ [코멘트: 회원별 토큰을 발급받을 수 있다.]
+ *************************************************************/
 @Slf4j
 @RestController
 @RequestMapping("/api")

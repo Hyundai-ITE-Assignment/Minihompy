@@ -20,6 +20,13 @@ import com.hyundai.minihompy.security.jwt.TokenProvider;
 
 import lombok.extern.log4j.Log4j2;
 
+/*************************************************************
+ 파일명: SecurityConfig.java
+ 기능: 시큐리티 설정 파일 적용
+ 작성자: 유지훈
+
+ [코멘트: 시큐리티 설정 파일 적용]
+ *************************************************************/
 @Configuration
 @Log4j2
 @EnableWebSecurity
@@ -30,6 +37,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 	private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
+	// 생성자로 의존성 주입
 	public SecurityConfig(
 		TokenProvider tokenProvider,
 		JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
@@ -40,6 +48,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		this.jwtAccessDeniedHandler = jwtAccessDeniedHandler;
 	}
 
+	//암호화 설정
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
@@ -80,7 +89,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		
 
 	}
-	
+
+	//권한 예외처리 추가
 	@Override
 	public void configure(WebSecurity web) throws Exception {
 		log.info("configure(WebSecurity web) 실행");

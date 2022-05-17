@@ -1,3 +1,5 @@
+<!-- 회원가입 jsp 파일 작성 및 Ajax 통신(유지훈) -->
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
@@ -13,7 +15,6 @@
   </head>
 
   <body>
-
   <div class="d-flex flex-column vh-100">
     <nav
         class="navbar navbar-expand-sm font-weight-bold justify-content-between">
@@ -23,6 +24,7 @@
       </a>
     </nav>
 
+    <!-- 회원 가입 로직 수행  -->
     <div class="card m-2">
       <div class="card-header">
         회원 가입
@@ -31,62 +33,42 @@
         <div>
           <form id="joinForm">
             <div class="input-group">
+              <!-- 회원 가입 아이디 입력  -->
               <div class="input-group-prepend"><span class="input-group-text">아이디</span></div>
               <input type="text" name="id" class="form-control" autocomplete="username">
             </div>
 
+            <!-- 회원 가입 이름 입력 -->
             <div class="input-group">
               <div class="input-group-prepend"><span class="input-group-text">이름</span></div>
               <textarea name="name" class="form-control"></textarea>
             </div>
 
+            <!-- 회원 가입 비밀번호 입력 -->
             <div class="input-group">
               <div class="input-group-prepend"><span class="input-group-text">비밀번호</span></div>
               <input type="password" name="password" class="form-control" autocomplete="current-password">
             </div>
 
+            <!-- 회원 가입 비밀번호 확인 입력 -->
             <div class="input-group">
               <div class="input-group-prepend"><span class="input-group-text">비밀번호 확인</span></div>
               <input type="password" name="password2" class="form-control" autocomplete="current-password">
             </div>
 
-<!--            <div class="input-group">-->
-<!--              <div class="input-group-prepend"><span class="input-group-text">권한 등록</span></div>-->
-<!--              <select class="form-control" name="mrole">-->
-<!--                <option value="ADMIN">ADMIN</option>-->
-<!--                <option value="USER" selected>USER</option>-->
-<!--              </select>-->
-<!--            </div>-->
-
+            <!-- 회원 가입 이메일 확인 입력 -->
             <div class="input-group">
               <div class="input-group-prepend"><span class="input-group-text">이메일</span></div>
               <input type="email" name="email" class="form-control">
             </div>
 
+            <!-- 회원 가입 form 전송 -->
             <div class="mt-3">
-<!--              <a href="javascript:join1()" class="btn btn-info btn-sm mr-2">POST /member/join1</a>-->
               <a href="javascript:join2()" class="btn btn-info btn-sm">회원 가입</a>
             </div>
           </form>
+          <!-- 회원가입 로직 수행  -->
           <script th:inline="javascript">
-            function join1() {
-              var member = {
-                mid: 		$("#joinForm [name=mid]").val(),
-                mname: 		$("#joinForm [name=mname]").val(),
-                mpassword: 	$("#joinForm [name=mpassword]").val(),
-                mrole: 		$("#joinForm [name=mrole]").val(),
-                memail: 	$("#joinForm [name=memail]").val(),
-              };
-
-              $.ajax({
-                url: "[(@{/member/join1})]",
-                method: "post",
-                data: member
-              }).done((data) => {
-                console.log(data);
-              });
-            }
-
             function join2() {
               var member = {
                 id: 		    $("#joinForm [name=id]").val(),
@@ -95,6 +77,7 @@
                 email: 	    $("#joinForm [name=email]").val(),
               };
 
+              // 회원가입 Ajax 요청 실행
               $.ajax({
                 url: "[(@{/members/signup})]",
                 method: "post",

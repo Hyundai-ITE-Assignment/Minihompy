@@ -1,3 +1,5 @@
+<!-- 로그인jsp 파일 작성 및 Ajax 통신(유지훈) -->
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
@@ -23,14 +25,16 @@
     </a>
   </nav>
 
-
+    <!--  로그인 폼  -->
     <div class="container centered text-center">
       <form class="form-signin" id="loginForm">
         <h1 class="h3 mb-3 font-weight-normal">[[${login_message}]]</h1>
 
+        <!--  사용자 아이디 입력  -->
         <label for="username" class="sr-only">ID</label>
         <input type="text" id="username" name="username" class="form-control" placeholder="ID" required="" autofocus="">
 
+        <!--   사용자 비밀번호 입력  -->
         <label for="password" class="sr-only">Password</label>
         <input type="password" id="password" name="password" class="form-control" placeholder="Password" required="">
 
@@ -38,13 +42,16 @@
           <label><input type="checkbox" value="remember-me"> Remember me</label>
         </div>
 
+        <!--  비밀번호 불일치 로직   -->
         <div align="center" th:if="${param.error}">
-          <p style="font-size: 40; color: #FF1C19;">아이디, 비밀번호가 일치하지 않습니다. 다시 로그인 해주세요</p>
+          <p style="font-size: 40; color: #FF1">아이디, 비밀번호가 일치하지 않습니다. 다시 로그인 해주세요</p>
         </div>
 
-<!--        <button class="btn btn-primary btn-block" type="submit">Sign in</button>-->
+        <!-- 싸이월드 로그인 -->
         <a href="javascript:login()" class="btn btn-info btn-sm">싸이월드 로그인</a>
       </form>
+
+      <!-- 로그인 Ajax 요청 -->
       <script th:inline="javascript">
         function login() {
           var username = $("#loginForm [name=username]").val();
@@ -64,24 +71,6 @@
             window.location.href='/';
           });
         }
-
-        // function login() {
-        //   var member = {
-        //     username: 		$("#loginForm [name=username]").val(),
-        //     password: 	$("#loginForm [name=password]").val(),
-        //   };
-        //
-        //   $.ajax({
-        //     url: "[(@{/api/authenticate})]",
-        //     method: "post",
-        //     data: JSON.stringify(member),
-        //     contentType: "application/json",
-        //     processData: false //data를 QueryString으로 표현하지 않음
-        //
-        //   }).done((data) => {
-        //     console.log(data);
-        //   });
-        // }
       </script>
 
     </div>

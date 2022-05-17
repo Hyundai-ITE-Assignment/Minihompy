@@ -24,6 +24,13 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 
 
+/*************************************************************
+ 파일명: TokenProvider.java
+ 기능: 토큰 생성 관련 빈 등록 로직
+ 작성자: 유지훈
+
+ [코멘트: X]
+ *************************************************************/
 @Component
 @Slf4j
 public class TokenProvider implements InitializingBean {
