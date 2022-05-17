@@ -16,11 +16,23 @@
 					if(sessionStorage.getItem("jwt") != null) {
 						 $("#loginBtn").remove();
 						 $("#joinBtn").remove();
+						 
+						 $.ajax({
+								url: "[(@{/members/info})]",
+								headers: {Authorization:`Bearer ${sessionStorage.getItem("jwt")}`},
+								method: "get",
+								processData: false,
+								contentType: false,
+								cache: false
+							}).done((data) => {
+								console.log(data);
+								$("#userName").text(data.name + "님 환영합니다");
+								$("#dotoriCnt").text(data.dotori);
+							});
 					}
 					
 					$.ajax({
 						url: "[(@{/members/hitcounts})]",
-						headers: {Authorization:`Bearer ${sessionStorage.getItem("jwt")}`},
 						method: "get",
 						processData: false,
 						contentType: false,
@@ -28,19 +40,6 @@
 					}).done((data) => {
 						console.log(data);		
 						$("#count").text(data);
-					});
-				
-					$.ajax({
-						url: "[(@{/members/info})]",
-						headers: {Authorization:`Bearer ${sessionStorage.getItem("jwt")}`},
-						method: "get",
-						processData: false,
-						contentType: false,
-						cache: false
-					}).done((data) => {
-						console.log(data);
-						$("#userName").text(data.name + "님 환영합니다");
-						$("#dotoriCnt").text(data.dotori);
 					});
 			})
 			
