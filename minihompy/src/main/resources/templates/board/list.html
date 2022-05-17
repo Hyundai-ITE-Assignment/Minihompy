@@ -1,3 +1,5 @@
+<!-- 게시글 목록 페이지, 페이징 처리 (박주영) -->
+
 <!DOCTYPE html>
 <html lang="ko" xmlns:th=http://www.thymeleaf.org
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
@@ -19,8 +21,8 @@
 					<th>조회수</th>
 				</tr>
 
-				<!-- 동적으로 리스트 출력하는 부분 -->
-
+				<!-- 동적으로 리스트 출력 -->
+				<!-- 받아오 게시글 리스트로 반복 -->
 				<tr th:if="${not #lists.isEmpty(list)}" th:each="dto: ${list}">
 					<td th:text="${dto.bno}" />
 					<td><a th:href="'javascript:goDetail(' + ${dto.bno} + ');'" th:text="${dto.title}"></a></td>
@@ -30,12 +32,14 @@
 				</tr>
 			</table>
 			<br />
-			<!-- ADMIN만 게시판 글쓰기 보이게 수정 -->
+			
+			<!-- ADMIN만 게시판 글쓰기 버튼 보이게 수정 -->
 			<div sec:authorize="hasAuthority('ADMIN')" class="pb-5">
 				<a href="/board/insert"
 					class="btn btn-info float-right btn-lg btn-sm mr-2">글쓰기</a>
 			</div>
 
+			<!-- 페이징 처리 -->
 			<div class="container row" style="float: none; margin: 100 auto;">
 				<div class="col-md-3" style="float: none; margin: 0 auto;">
 					<ul class="pagination" th:if="${pager.totalPageNo != 0}">
@@ -60,6 +64,9 @@
 			<!-- 게시물 목록 끝 -->
 		</div>
 		<script th:inline="javascript">
+			// /board/detail 요청
+			// 게시글 상세 조회
+			// JWT 토큰과 게시글 번호 전달, form을 POST 방식으로 전송
 			function goDetail(bno) {
 				var token = sessionStorage.getItem("jwt");
 
@@ -72,6 +79,10 @@
 
 				form.submit();
 			}
+			
+			// /board 요청
+			// 페이지 눌렀을 때 이동
+			// JWT 토큰과 페이지 번호 전달, form을 POST 방식으로 전송
 			function goPage(page) {
 				var token = sessionStorage.getItem("jwt");
 				
@@ -85,11 +96,14 @@
 				form.submit();
 			}
 
+			// /board 요청
+			// 페이지 이전 눌렀을 때 이동
+			// JWT 토큰과 페이지 번호 전달, form을 POST 방식으로 전송
 			function goPrevPage(page) {
 				var token = sessionStorage.getItem("jwt");
 
 				var form = document.createElement("form");
-				form.action = "/board?pageNo=" + page;
+				form.action = "/board";
 				form.method = "POST";
 				form.innerHTML = "<input name='Authorization' value='" + "`Bearer" + token + "`'>";
 				form.innerHTML += "<input name='pageNo' value='" + page + "'>";
@@ -98,11 +112,14 @@
 				form.submit();
 			}
 
+			// /board 요청
+			// 페이지 다음 눌렀을 때 이동
+			// JWT 토큰과 페이지 번호 전달, form을 POST 방식으로 전송
 			function goNextPage(page) {
 				var token = sessionStorage.getItem("jwt");
 				
 				var form = document.createElement("form");
-				form.action = "/board?pageNo=" + page;
+				form.action = "/board";
 				form.method = "POST";
 				form.innerHTML = "<input name='Authorization' value='" + "`Bearer" + token + "`'>";
 				form.innerHTML += "<input name='pageNo' value='" + page + "'>";

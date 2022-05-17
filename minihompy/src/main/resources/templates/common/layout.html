@@ -1,3 +1,5 @@
+<!-- 전체적인 layout 페이지, fragment들을 포함하여 구성 (박주영) -->
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
 	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
@@ -13,10 +15,13 @@
 <link rel="stylesheet" th:href="@{/css/app.css}" />
 <script th:inline="javascript">
 			$(document).ready(function() {
+					// 인증 정보가 있을 경우 로그인,회원가입 버튼 없애고 이름과 도토리 수 출려
 					if(sessionStorage.getItem("jwt") != null) {
 						 $("#loginBtn").remove();
 						 $("#joinBtn").remove();
 						 
+						 // 회원 정보 조회
+						// 전송 시 header에 JWT토큰을 넣어줌
 						 $.ajax({
 								url: "[(@{/members/info})]",
 								headers: {Authorization:`Bearer ${sessionStorage.getItem("jwt")}`},
@@ -31,6 +36,7 @@
 							});
 					}
 					
+					// 게시글 총 조회수 조회
 					$.ajax({
 						url: "[(@{/members/hitcounts})]",
 						method: "get",
@@ -38,17 +44,24 @@
 						contentType: false,
 						cache: false
 					}).done((data) => {
-						console.log(data);		
+						console.log(data);
+						// 상단에 출력
 						$("#count").text(data);
 					});
 			})
 			
+			// /members/dotori 요청
+			// 도토리 충전
+			// Ajax 통신 이용하여 REST API GET방식으로 요청
 			function addDotori() {
+				// 로그인 확인
 				var token = sessionStorage.getItem("jwt");
 				if(token == null) {
 					alert("로그인 후 이용해주세요.");
 					return;
 				}
+				
+				// 전송 시 header에 JWT토큰을 넣어줌
 				$.ajax({
 					url: "[(@{/members/dotori})]",
 					headers: {Authorization:`Bearer ${sessionStorage.getItem("jwt")}`},

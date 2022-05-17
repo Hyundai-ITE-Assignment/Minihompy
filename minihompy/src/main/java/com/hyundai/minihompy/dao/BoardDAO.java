@@ -18,19 +18,27 @@ import com.hyundai.minihompy.domain.Pager;
 @Mapper
 public interface BoardDAO {
 	
+	// 페이지 별 게시글 목록 조회
 	public List<BoardDTO> selectByPage(Pager pager) throws SQLException;
 	
+	// 총 게시글 수 조회
 	public int count() throws SQLException;
 	
+	// 게시글 상세 정보 반환
 	public BoardDTO getDetail(long bno) throws SQLException;
 	
+	// 게시글 insert
 	public void insert(BoardDTO boardDTO) throws SQLException;
 	
+	// 게시글 update
 	public int update(BoardDTO boardDTO) throws SQLException;
 
+	// 게시글 delete
 	public int delete(long bno) throws SQLException;
 	
+	// 게시글 조회수 update
 	public int updateHitcount(long bno) throws SQLException;
 	
+	// 게시글 총 조회수 조회
 	public int totalHitcount() throws SQLException;
 }

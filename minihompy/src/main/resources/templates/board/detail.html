@@ -1,3 +1,5 @@
+<!-- 게시글 상세 조회 및 댓글 조회,작성,수정,삭제 (박주영) -->
+
 <!DOCTYPE html>
 <html lang="ko" xmlns:th=http://www.thymeleaf.org
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
@@ -73,13 +75,16 @@
 			</div>
 			<br /> <br />
 			<hr>
-			<h4 class="mt-5">Reply</h4>
-			<div class="row">
-				<div id="user" class="col-md-3"></div>
-				<textarea class="col-md-6 float-right" name="replytext"
-					id='newReplyText'></textarea>
-				<button class="btn btn-info col-md-2 ml-3 float-right"
-					id="replyAddBtn">댓글 등록</button>
+			<!-- 댓글 입력 창 -->
+			<div id="replayAddDiv">
+				<h4 class="mt-5">Reply</h4>
+				<div class="row">
+					<div id="user" class="col-md-3"></div>
+					<textarea class="col-md-6 float-right" name="replytext"
+						id='newReplyText'></textarea>
+					<button class="btn btn-info col-md-2 ml-3 float-right"
+						id="replyAddBtn">댓글 등록</button>
+				</div>
 			</div>
 
 			<!-- 댓글이 추가되는 부분 -->
@@ -108,11 +113,22 @@
 			<script th:inline="javascript">
 			
 				$( document ).ready(function() {
+					
+					// 첨부파일 있으면 띄우기
 					var fileName = $("#fileName").val();
 					if(fileName != "") {
 						showUploadedImages(fileName);
 					}
 					
+					// 비로그인 상태에선 댓글 창 없애기
+					if(sessionStorage.getItem("jwt") == null) {
+						$("replayAddDiv").remove();
+					}
+					
+					
+					// /members/info 요청
+					// 멤버 정보 요청
+					// Ajax 통신 이용하여 REST API GET방식으로 요청
 					$.ajax({
 						url: "[(@{/members/info})]",
 						headers: {Authorization:`Bearer ${sessionStorage.getItem("jwt")}`},
@@ -121,7 +137,8 @@
 						contentType: false,
 						cache: false
 					}).done((data) => {
-						console.log(data);		
+						console.log(data);
+						// 댓글 작성자에 현재 로그인 유저 이름 설정
 						$("#user").text(data.name);
 					});
 				});
@@ -131,13 +148,18 @@
 					const formData = new FormData();
 					formData.append("fileName", file);
 					var divArea = $("#fileDiv");
+					// /board/display에 GET 요청
 				    var str = "<img src='/board/display?fileName="+file+"'>";
 				    divArea.append(str);
 				    
 				 }
 				
+				// /board 요청
 				// 게시글 삭제
+				// Ajax 통신 이용하여 REST API DELETE방식으로 요청
 				function deleteBoard() {
+					
+					// 전송 시 header에 JWT토큰을 넣어줌
 					$.ajax({
 						url: "[(@{/board/})]" + $(".bno").text(),
 						headers: {Authorization:`Bearer ${sessionStorage.getItem("jwt")}`},
@@ -152,7 +174,9 @@
 					});
 				}
 				
-				// 목록으로 버튼 눌렀을 때
+				// 목록으로 버튼 눌렀을 때 게시글 목록으로 이동
+				// /board 요청
+				// JWT 토큰 전달, form을 POST 방식으로 전송
 				function goBoard() {
 					var token = sessionStorage.getItem("jwt");
 					
@@ -168,10 +192,12 @@
 
 			<!-- 댓글 관련 스크립트 -->
 			<script th:inline="javascript">
-			  var bno = $(".bno").text(); // 기본값
+			  var bno = $(".bno").text(); // 게시글 번호 가져오기
 			  getAllList(); // 페이지 시작 시 함수 호출
 			  
-			  // 댓글 리스트 가져오기
+		  	// /replies/{bno} 요청
+			// 댓글 리스트 가져오기
+			// Ajax 통신 이용하여 동적으로 댓글 리스트 생성
 			  function getAllList() {
 				$.getJSON("/replies/" + bno,
 				function(data) {
@@ -186,6 +212,7 @@
 							+ this.replyer + "</span>  : " + "<div class='replyDiv pl-1 pr-5'>" + this.replytext + "</div><div class='text-secondary'>" + date
 							+ "</div>";
 						
+						// 자신이 쓴 댓글만 수정/삭제 가능
 						// 현재 유저와 댓글을 입력한 유저가 같을 때만 모달창 show
 						var user = $("#user").text();
 						var replyer = this.replyer;
@@ -199,10 +226,14 @@
 					$("#replies").html(str);
 				});
 				
+				// 댓글창 clear
 				$("#newReplyText").val('');
 			  }
 			  
-			  // 댓글 추가
+			// /replies 요청
+			// 댓글 추가
+			// Ajax 통신 이용하여 REST API POST방식으로 요청
+			// 전송 시 header에 JWT토큰을 넣어줌
 			  $("#replyAddBtn").on("click", function() {
 				  var replyer = $("#replyer").val();
 				  var replytext = $("#newReplyText").val();
@@ -229,7 +260,7 @@
 				  });
 			  })
 			  
-			  // 댓글 수정/삭제 모달창 show
+			// 댓글 수정 버튼 클릭하면 수정/삭제/닫기가 가능한 모달창 열기
 			  $("#replies").on("click", ".replyLi a", function() {
 				  
 				  var reply = $(this).parent().parent(); // li
@@ -241,7 +272,10 @@
 				  
 			  })
 			  
-			  // 댓글 수정 눌렀을 때
+			 // /replies 요청
+			// 댓글 수정
+			// Ajax 통신 이용하여 REST API PUT방식으로 요청
+			// 전송 시 header에 JWT토큰을 넣어줌
 			  $("#replyModBtn").on("click", function() {
 				  var rno = $(".modal-title").html();
 				  var replytext = $("#replytext").val();
@@ -259,6 +293,7 @@
 					  }),
 					  success : function(result) {
 						  console.log(result);
+						  // 수정 성공 시 모달 안보이게 수정
 						  if (result == 'SUCCESS') {
 							  $("#modDiv").hide("slow");
 							  getAllList();
@@ -268,7 +303,10 @@
 			  })
 			  
 			  
-			  // 댓글 삭제 눌렀을 때
+			 // /replies/{rno} 요청
+			// 댓글 삭제
+			// Ajax 통신 이용하여 REST API DELETE방식으로 요청
+			// 전송 시 header에 JWT토큰을 넣어줌
 			  $("#replyDelBtn").on("click", function() {
 				  var rno = $(".modal-title").html();
 				  var replytext = $("#replytext").val();
@@ -283,6 +321,7 @@
 					  dataType : 'text',
 					  success : function(result) {
 						  console.log(result);
+						  // 수정 성공 시 모달창 안보이게
 						  if (result == 'SUCCESS') {
 							  $("#modDiv").hide("slow");
 							  getAllList();

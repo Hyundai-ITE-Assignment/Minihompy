@@ -11,13 +11,22 @@ import com.hyundai.minihompy.domain.Pager;
 
 import lombok.extern.log4j.Log4j2;
 
+/*************************************************************
+파일명: GuestbookServiceImpl.java
+기능: 방명록 관련 Service
+작성자: 박주영
+
+[코멘트: X]
+*************************************************************/
 @Service
 @Log4j2
 public class GuestbookServiceImpl implements GuestbookService {
 
+	// DAO 자동주입
 	@Autowired
 	private GuestbookDAO guestbookDAO;
 
+	// 페이지별 방명록 목록 반환
 	@Override
 	public List<GuestbookDTO> getList(Pager pager) throws Exception {
 		try {
@@ -28,12 +37,14 @@ public class GuestbookServiceImpl implements GuestbookService {
 		}
 	}
 	
+	// 총 방명록 수 반환
 	@Override
 	public int getCount() throws Exception {
 		return guestbookDAO.count();
 	}
 
 
+	// 방명록 작성
 	@Override
 	public void insert(GuestbookDTO guestbookDTO) throws Exception {
 		try {
@@ -45,6 +56,7 @@ public class GuestbookServiceImpl implements GuestbookService {
 		}
 	}
 
+	// 방명록 수정
 	@Override
 	public void update(GuestbookDTO guestbookDTO) throws Exception {
 		try {
@@ -57,6 +69,7 @@ public class GuestbookServiceImpl implements GuestbookService {
 		}
 	}
 	
+	// 방명록 삭제
 	@Override
 	public void delete(long bno) throws Exception {
 		try {

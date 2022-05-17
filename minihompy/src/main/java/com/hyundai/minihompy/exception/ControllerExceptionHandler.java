@@ -11,6 +11,13 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import lombok.extern.log4j.Log4j2;
 
+/*************************************************************
+파일명: ControllerExceptionHandler.java
+기능: Controller 응답 Exception 처리 Handler
+작성자: 박주영
+
+[코멘트: X]
+*************************************************************/
 @Component
 @ControllerAdvice
 @Log4j2

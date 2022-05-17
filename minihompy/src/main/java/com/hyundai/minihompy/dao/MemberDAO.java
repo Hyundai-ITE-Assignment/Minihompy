@@ -6,6 +6,13 @@ import java.sql.SQLException;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+/*************************************************************
+파일명: MemberDAO.java
+기능: 회원 관련 DAO
+작성자: 유지훈
+
+[코멘트: X]
+*************************************************************/
 @Mapper
 public interface MemberDAO {
 

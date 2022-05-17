@@ -4,6 +4,13 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+/*************************************************************
+파일명: Pager.java
+기능: 페이징 관련 DTO
+작성자: 박주영
+
+[코멘트: X]
+*************************************************************/
 @Data
 @Setter
 @Getter

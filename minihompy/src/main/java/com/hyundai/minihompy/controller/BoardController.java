@@ -44,6 +44,7 @@ import net.coobird.thumbnailator.Thumbnailator;
 @Log4j2
 public class BoardController {
 
+	// 필요한 서비스 자동 주입
 	@Autowired
 	private BoardService boardService;
 	
@@ -54,13 +55,14 @@ public class BoardController {
 	@Value("${com.hyundai.minihompy.upload.path}")
 	private String uploadPath;
 
-	// 게시글 작성
+	// 게시글 작성 - ADMIN만 가능
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@PostMapping("/insert")
 	public BoardDTO insert(BoardDTO boardDTO, Model model, @AuthenticationPrincipal User authentication) throws Exception {
 		log.info(boardDTO.toString());
 
 		try {
+			// 인증 정보로 id와 name 설정
 			boardDTO.setId(authentication.getUsername());
 			MemberDTO memberDTO = memberService.findById(authentication.getUsername(), 0);
 			boardDTO.setName(memberDTO.getName());
@@ -72,6 +74,7 @@ public class BoardController {
 			// 파일 업로드시 동작
 			if (boardDTO.getAttach() != null && !boardDTO.getAttach().isEmpty()) {
 				log.info("파일 업로드 시작");
+				// 업로드 파일 정보 세팅
 				MultipartFile mf = boardDTO.getAttach();
 				boardDTO.setAttachoname(mf.getOriginalFilename());
 				boardDTO.setAttachsname(new Date().getTime() + "-" + mf.getOriginalFilename());
@@ -84,10 +87,12 @@ public class BoardController {
 					log.info("업로드 에러" + e);
 				}
 			}
+			// 게시글 insert
 			boardService.insert(boardDTO);
-			log.info(boardDTO);
 			boardDTO = boardService.getDetail(boardDTO.getBno());
 			log.info(boardDTO);
+			
+			// 게시글 정보 반환
 			return boardDTO;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -95,11 +100,12 @@ public class BoardController {
 		}
 	}
 	
-	// 게시글 수정
+	// 게시글 수정 - ADMIN만 가능
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@PostMapping("/update")
 	public BoardDTO update(BoardDTO boardDTO, @AuthenticationPrincipal User authentication) throws Exception {
 		try {
+			// 인증 정보로 id와 name 설정
 			boardDTO.setId(authentication.getUsername());
 			MemberDTO memberDTO = memberService.findById(authentication.getUsername(), 0);
 			boardDTO.setName(memberDTO.getName());
@@ -108,23 +114,12 @@ public class BoardController {
 			String contents = boardDTO.getContent().replace("\r\n", "<br>");
 			boardDTO.setContent(contents);
 
-			// 파일 업로드시 동작
-			if (boardDTO.getAttach() != null && !boardDTO.getAttach().isEmpty()) {
-				MultipartFile mf = boardDTO.getAttach();
-				boardDTO.setAttachoname(mf.getOriginalFilename());
-				boardDTO.setAttachsname(new Date().getTime() + "-" + mf.getOriginalFilename());
-				boardDTO.setAttachtype(mf.getContentType());
-
-				try {
-					File file = new File(uploadPath + boardDTO.getAttachsname());
-					mf.transferTo(file);
-				} catch (Exception e) {
-					log.info("업로드 에러" + e);
-				}
-			}
+			// 게시글 update
 			boardService.update(boardDTO);
 			boardDTO = boardService.getDetail(boardDTO.getBno());
 			log.info(boardDTO);
+			
+			// 수정된 게시글 반환
 			return boardDTO;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -132,14 +127,17 @@ public class BoardController {
 		}
 	}
 
-	// 게시글 삭제
+	// 게시글 삭제 - ADMIN만 가능
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@DeleteMapping("/{bno}")
 	public Map<String, String> delete(@PathVariable long bno, Model model) throws Exception {
 		try {
+			// 게시글 삭제
 			boardService.delete(bno);
 			Map<String, String> map = new HashMap<String, String>();
 			map.put("result", "success");
+			
+			// 성공 결과 반환
 			return map;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -147,6 +145,7 @@ public class BoardController {
 		}
 	}
 	
+	// 첨부파일 조회 - 누구나 가능
 	@GetMapping("/display")
 	public ResponseEntity<byte[]> getFile(String fileName) {
 		ResponseEntity<byte[]> result = null;

@@ -22,9 +22,11 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class BoardServiceImpl implements BoardService {
 
+	// DAO 자동 주입
 	@Autowired
 	private BoardDAO boardDAO;
 
+	// 페이지별 게시글 목록 반환
 	@Override
 	public List<BoardDTO> getList(Pager pager) throws Exception {
 		try {
@@ -35,11 +37,13 @@ public class BoardServiceImpl implements BoardService {
 		}
 	}
 	
+	// 총 게시글 수 반환
 	@Override
 	public int getCount() throws Exception {
 		return boardDAO.count();
 	}
 	
+	// 게시글 상세 정보 반환
 	@Override
 	public BoardDTO getDetail(long bno) throws Exception {
 		try {
@@ -54,6 +58,7 @@ public class BoardServiceImpl implements BoardService {
 		}
 	}
 
+	// 게시글 작성
 	@Override
 	public void insert(BoardDTO boardDTO) throws Exception {
 		try {
@@ -65,6 +70,7 @@ public class BoardServiceImpl implements BoardService {
 		}
 	}
 
+	// 게시글 수정
 	@Override
 	public void update(BoardDTO boardDTO) throws Exception {
 		try {
@@ -77,6 +83,7 @@ public class BoardServiceImpl implements BoardService {
 		}
 	}
 	
+	// 게시글 삭제
 	@Override
 	public void delete(long bno) throws Exception {
 		try {
@@ -87,13 +94,14 @@ public class BoardServiceImpl implements BoardService {
 		}
 	}
 
-	
+	// 게시글 조회수+1
 	@Override
 	public void updateHitcount(long bno) throws Exception {
 		boardDAO.updateHitcount(bno);
 		
 	}
 
+	// 게시글 총 조회수 반환
 	@Override
 	public int totalHitcount() throws Exception {
 		int total = 0;

@@ -1,10 +1,16 @@
 package com.hyundai.minihompy.service;
 
-import com.hyundai.minihompy.domain.MemberDTO;
-import com.hyundai.minihompy.domain.MemberRoleSet;
 import java.sql.SQLException;
-import org.apache.ibatis.annotations.Param;
 
+import com.hyundai.minihompy.domain.MemberDTO;
+
+/*************************************************************
+파일명: MemberService.java
+기능: 회원 관련 Service 인터페이스
+작성자: 유지훈
+
+[코멘트: X]
+*************************************************************/
 public interface MemberService {
 
     void insertMember(MemberDTO memberDTO) throws SQLException;

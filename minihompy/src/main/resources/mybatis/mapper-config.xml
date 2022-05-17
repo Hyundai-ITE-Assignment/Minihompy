@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
-  
+ 
+<!-- 
+/*************************************************************
+파일명: mapper-config.xml
+기능: DTO의 Alias 지정
+작성자: 박주영
+
+[코멘트: X]
+*************************************************************/
+ -->
 <configuration>
 	<typeAliases>
 		<typeAlias type="com.hyundai.minihompy.domain.MemberRoleSet" alias="MemberRoleSet"/>

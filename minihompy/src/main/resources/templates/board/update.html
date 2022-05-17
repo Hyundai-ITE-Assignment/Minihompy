@@ -1,3 +1,5 @@
+<!-- 게시글 수정 페이지 (박주영) -->
+
 <!DOCTYPE html>
 <html lang="ko" xmlns:th=http://www.thymeleaf.org
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
@@ -35,6 +37,10 @@
 					</div>
 				</form>
 				<script th:inline="javascript">
+				
+				// /board/detail 요청
+				// 수정한 게시글 상세 페이지로 이동
+				// JWT 토큰과 게시글 번호 전달, form을 POST 방식으로 전송
 				function goDetail(bno) {
 					var token = sessionStorage.getItem("jwt");
 
@@ -48,6 +54,9 @@
 					form.submit();
 				}
 				
+				// /board/update 요청
+				// 수정한 게시글 UPDATE 요청
+				// Ajax 통신 이용하여 REST API POST방식으로 요청
 				function updateBoard() {
 					const bno = $("#boardUpdateForm [name=bno]").val();
 					const title = $("#boardUpdateForm [name=title]").val();
@@ -59,7 +68,7 @@
 					formData.append("title", title);
 					formData.append("content", content);
 		
-					
+					// 전송 시 header에 JWT토큰을 넣어줌
 					$.ajax({
 						url: "[(@{/board/update})]",
 						headers: {Authorization:`Bearer ${sessionStorage.getItem("jwt")}`},

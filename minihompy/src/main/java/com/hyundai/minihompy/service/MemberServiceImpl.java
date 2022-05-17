@@ -1,18 +1,27 @@
 package com.hyundai.minihompy.service;
 
-import com.hyundai.minihompy.dao.MemberDAO;
-import com.hyundai.minihompy.domain.MemberDTO;
-import com.hyundai.minihompy.domain.MemberRole;
-import com.hyundai.minihompy.domain.MemberRoleSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import lombok.extern.log4j.Log4j2;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.hyundai.minihompy.dao.MemberDAO;
+import com.hyundai.minihompy.domain.MemberDTO;
+import com.hyundai.minihompy.domain.MemberRole;
+import com.hyundai.minihompy.domain.MemberRoleSet;
+
+import lombok.extern.log4j.Log4j2;
+
+/*************************************************************
+파일명: MemberServiceImpl.java
+기능: 회원 관련 Service
+작성자: 유지훈
+
+[코멘트: X]
+*************************************************************/
 @Service
 @Log4j2
 public class MemberServiceImpl implements MemberService{

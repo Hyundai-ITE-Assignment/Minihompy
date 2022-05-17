@@ -1,9 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+/*************************************************************
+파일명: GuestbookDAO.xml
+기능: 방명록 조회, 총 개수 초회, 작성, 수정, 삭제
+작성자: 박주영
 
+[코멘트: X]
+*************************************************************/
+ -->
 <mapper namespace="com.hyundai.minihompy.dao.GuestbookDAO">
-
+	<!-- 방명록 목록 SELECT -->
 	<select id="selectByPage" parameterType="Pager" resultType="GuestbookDTO">
 		SELECT rnum, gno, content, regdate, name
 		FROM (
@@ -17,11 +25,13 @@
 		)
 		WHERE rnum &gt;= #{startRowNo}
 	</select>
-
+	
+	<!-- 방명록 총 개수 SELECT -->
 	<select id="count" resultType="int">
 		SELECT count(*) FROM guestbook
 	</select>
 
+	<!-- 방명록 INSERT -->
 	<insert id="insert" parameterType="GuestbookDTO">
 		<selectKey order="BEFORE" resultType="long"
 			keyProperty="gno">
@@ -33,6 +43,7 @@
 
 	</insert>
 
+	<!-- 방명록 UPDATE -->
 	<update id="update" parameterType="GuestbookDTO">
 			UPDATE guestbook
 			SET
@@ -41,6 +52,7 @@
 
 	</update>
 	
+	<!-- 방명록 DELETE -->
 	<delete id="delete" parameterType="long">
 		DELETE guestbook
 		WHERE gno=#{gno}

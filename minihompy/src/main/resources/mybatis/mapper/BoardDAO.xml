@@ -1,9 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+/*************************************************************
+파일명: BoardDAO.xml
+기능: 게시글 조회, 총 개수 초회, 상세 보기, 작성, 수정, 삭제, 조회수 업데이트, 총 조회수 반환
+작성자: 박주영
 
+[코멘트: X]
+*************************************************************/
+ -->
 <mapper namespace="com.hyundai.minihompy.dao.BoardDAO">
 
+	<!-- 페이지별 게시글 목록 SELECT -->
 	<select id="selectByPage" parameterType="Pager" resultType="BoardDTO">
 		SELECT rnum, bno, title, regdate, name, hitcount
 		FROM (
@@ -18,10 +27,12 @@
 		WHERE rnum &gt;= #{startRowNo}
 	</select>
 
+	<!-- 총 게시글 수 SELECT -->
 	<select id="count" resultType="int">
 		SELECT count(*) FROM board
 	</select>
 
+	<!-- 게시글 상세정보 SELECT -->
 	<select id="getDetail" parameterType="long"
 		resultType="BoardDTO">
 		SELECT bno, title, name, regdate, content,
@@ -33,7 +44,9 @@
 		bno=#{bno}
 	</select>
 
+	<!-- 게시글 INSERT -->
 	<insert id="insert" parameterType="BoardDTO">
+		<!-- SEQUENCE 미리 조회 -->
 		<selectKey order="BEFORE" resultType="long"
 			keyProperty="bno">
 			SELECT sq_board.nextval FROM dual
@@ -51,7 +64,8 @@
 		</if>
 
 	</insert>
-
+	
+	<!-- 게시글 UPDATE -->
 	<update id="update" parameterType="BoardDTO">
 		<if test="attachoname == null">
 			UPDATE board
@@ -73,17 +87,20 @@
 
 	</update>
 	
+	<!-- 게시글 DELETE -->
 	<delete id="delete" parameterType="long">
 		DELETE board
 		WHERE bno=#{bno}
 	</delete>
 
+	<!-- 게시글 조회수 UPDATE -->
 	<update id="updateHitcount" parameterType="long">
 		UPDATE board
 		SET hitcount = hitcount + 1
 		WHERE bno=#{bno}
 	</update>
 	
+	<!-- 게시글 총 조회수 SELECT -->
 	<select id="totalHitcount" resultType="int">
 		SELECT SUM(hitcount)
 		FROM board

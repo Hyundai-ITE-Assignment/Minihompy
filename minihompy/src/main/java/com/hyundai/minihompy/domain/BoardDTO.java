@@ -8,6 +8,13 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+/*************************************************************
+파일명: BoardDTO.java
+기능: 게시글 DTO
+작성자: 박주영
+
+[코멘트: X]
+*************************************************************/
 @Data
 @Getter
 @Setter

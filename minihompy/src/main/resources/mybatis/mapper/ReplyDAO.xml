@@ -2,26 +2,38 @@
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+/*************************************************************
+파일명: ReplyDAO.xml
+기능: 댓글 조회, 작성, 수정, 삭제
+작성자: 박주영
 
+[코멘트: X]
+*************************************************************/
+ -->
 <mapper namespace="com.hyundai.minihompy.dao.ReplyDAO">
 
+	<!-- 게시글별 댓글 목록 SELECT -->
 	<select id="getList" resultType="ReplyDTO">
 		SELECT * FROM reply
 		WHERE bno = #{bno}
 		ORDER BY rno DESC
 	</select>
 
+	<!-- 댓글 INSERT -->
 	<insert id="insert" parameterType="ReplyDTO">
 		INSERT INTO reply( rno , bno, replytext, id, replyer, regdate, updatedate)
 		VALUES(sq_reply.nextval , #{bno}, #{replytext}, #{id}, #{replyer}, sysdate, sysdate)
 	</insert>
 
+	<!-- 댓글 UPDATE -->
 	<update id="update" parameterType="BoardDTO">
 		UPDATE reply
 		SET replytext = #{replytext}, updatedate = sysdate
 		WHERE rno=#{rno}
 	</update>
 
+	<!-- 댓글 DELETE -->
 	<delete id="delete" parameterType="int">
 		DELETE FROM reply
 		WHERE rno=#{rno}

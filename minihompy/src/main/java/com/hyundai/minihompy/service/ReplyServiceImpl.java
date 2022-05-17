@@ -11,14 +11,23 @@ import com.hyundai.minihompy.domain.ReplyDTO;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
+/*************************************************************
+파일명: ReplyService.java
+기능: 댓글 관련 Service
+작성자: 박주영
+
+[코멘트: X]
+*************************************************************/
 @Log4j2
 @Service
 @AllArgsConstructor
 public class ReplyServiceImpl implements ReplyService {
 
+	// DAO 자동주입
 	@Autowired
 	private ReplyDAO replyDAO;
 	
+	// 게시글의 댓글 목록 반환
 	@Override
 	public List<ReplyDTO> getList(int bno) throws Exception {
 		try {
@@ -29,6 +38,7 @@ public class ReplyServiceImpl implements ReplyService {
 		}
 	}
 
+	// 댓글 작성
 	@Override
 	public void insert(ReplyDTO replyDTO) throws Exception {
 		try {
@@ -40,6 +50,7 @@ public class ReplyServiceImpl implements ReplyService {
 		}
 	}
 
+	// 댓글 수정
 	@Override
 	public int update(ReplyDTO replyDTO) throws Exception {
 		try {
@@ -51,6 +62,7 @@ public class ReplyServiceImpl implements ReplyService {
 		}
 	}
 
+	// 댓글 삭제 
 	@Override
 	public int delete(int rno) throws Exception {
 		try {

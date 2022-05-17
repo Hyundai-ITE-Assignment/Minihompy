@@ -1,3 +1,5 @@
+<!-- 게시글 작성 페이지 (박주영) -->
+
 <!DOCTYPE html>
 <html lang="ko" xmlns:th=http://www.thymeleaf.org
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
@@ -25,14 +27,6 @@
 
 					<div class="input-group">
 						<div class="input-group-prepend">
-							<span class="input-group-text">아이디</span>
-						</div>
-						<input type="text" name="id" class="form-control" value="user"
-							readonly>
-					</div>
-
-					<div class="input-group">
-						<div class="input-group-prepend">
 							<span class="input-group-text">첨부파일</span>
 						</div>
 						<input type="file" class="form-control" name="attach">
@@ -45,7 +39,9 @@
 				</form>
 				<script th:inline="javascript">
 				
-				// 게시글로 이동
+				// /board/detail 요청
+				// 작성한 게시글 상세 페이지로 이동
+				// JWT 토큰과 게시글 번호 전달, form을 POST 방식으로 전송
 				function goDetail(bno) {
 					var token = sessionStorage.getItem("jwt");
 
@@ -59,6 +55,9 @@
 					form.submit();
 				}
 				
+				// /board/insert 요청
+				// 작성한 게시글 INSERT 요청
+				// Ajax 통신 이용하여 REST API POST방식으로 요청
 				function createBoard() {
 					const title = $("#boardInsertForm [name=title]").val();
 					const content = $("#boardInsertForm [name=content]").val();
@@ -74,6 +73,7 @@
 						formData.append("attach", attach);
 					}//end if
 					
+					// 전송 시 header에 JWT토큰을 넣어줌
 					$.ajax({
 						url: "[(@{/board/insert})]",
 						headers: {Authorization:`Bearer ${sessionStorage.getItem("jwt")}`},

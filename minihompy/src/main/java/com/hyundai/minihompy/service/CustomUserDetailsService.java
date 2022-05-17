@@ -14,6 +14,13 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+/*************************************************************
+파일명: CustomUserDetailsService.java
+기능: Security 관련 Service
+작성자: 유지훈
+
+[코멘트: X]
+*************************************************************/
 @Component("userDetailsService")
 public class CustomUserDetailsService implements UserDetailsService {
 
