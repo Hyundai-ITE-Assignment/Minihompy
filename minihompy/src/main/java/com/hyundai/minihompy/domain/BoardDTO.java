@@ -18,7 +18,6 @@ public class BoardDTO {
 	private String title;
 	private String content;
 	private Date regdate;
-	private String password;
 	private MultipartFile attach;
 	private String attachoname;
 	private String attachsname;

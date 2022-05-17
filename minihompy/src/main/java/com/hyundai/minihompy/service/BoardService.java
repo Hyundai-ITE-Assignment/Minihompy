@@ -1,5 +1,6 @@
 package com.hyundai.minihompy.service;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import com.hyundai.minihompy.domain.BoardDTO;
@@ -21,4 +22,5 @@ public interface BoardService {
 	
 	public void updateHitcount(long bno) throws Exception;
 	
+	public int totalHitcount(String id) throws Exception;
 }

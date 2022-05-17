@@ -20,4 +20,6 @@ public interface MemberDAO {
      void deleteMember(@Param("id") String id) throws SQLException;
 
      void deleteMemberRole(@Param("member_id") String member_id) throws SQLException;
+     
+     void addDotori(@Param("id") String id) throws SQLException;
 }

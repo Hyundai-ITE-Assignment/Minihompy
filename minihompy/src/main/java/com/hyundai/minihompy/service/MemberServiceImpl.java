@@ -82,4 +82,14 @@ public class MemberServiceImpl implements MemberService{
       log.info(throwables.getMessage());
     }
   }
+
+	@Override
+	public void addDotori(String id) {
+		try {
+			memberDAO.addDotori(id);
+		} catch (SQLException throwables) {
+			log.info(throwables.getMessage());
+		}
+		
+	}
 }

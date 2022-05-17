@@ -14,4 +14,6 @@ public interface MemberService {
     void updateMember(MemberDTO memberDTO);
 
     void deleteMember(String id);
+    
+    void addDotori(String id);
 }

@@ -39,18 +39,15 @@
 			SELECT sq_board.nextval FROM dual
 		</selectKey>
 		<if test="attachoname == null">
-			INSERT INTO board(bno, id, name, title, content, regdate,
-			password, hitcount)
+			INSERT INTO board(bno, id, name, title, content, regdate, hitcount)
 			VALUES(#{bno}, #{id}, #{name}, #{title},
-			#{content}, sysdate, #{password}, 0)
+			#{content}, sysdate, 0)
 		</if>
 		<if test="attachoname != null">
-			INSERT INTO board(bno, id, name, title, content, regdate,
-			password, hitcount, attachoname, attachsname, attachtype)
+			INSERT INTO board(bno, id, name, title, content, regdate, hitcount
+			, attachoname, attachsname, attachtype)
 			VALUES(#{bno}, #{id}, #{name}, #{title}, #{content},
-			sysdate,
-			#{password}, 0, #{attachoname}, #{attachsname},
-			#{attachtype})
+			sysdate, 0, #{attachoname}, #{attachsname}, #{attachtype})
 		</if>
 
 	</insert>
@@ -59,7 +56,6 @@
 		<if test="attachoname == null">
 			UPDATE board
 			SET
-			name = #{name},
 			title = #{title},
 			content=#{content}
 			WHERE bno=#{bno}
@@ -67,7 +63,6 @@
 		<if test="attachoname != null">
 			UPDATE board
 			SET
-			name = #{name},
 			title = #{title},
 			content=#{content},
 			attachoname=#{attachoname},
@@ -85,10 +80,14 @@
 
 	<update id="updateHitcount" parameterType="long">
 		UPDATE board
-		SET
-		hitcount = hitcount + 1
+		SET hitcount = hitcount + 1
 		WHERE bno=#{bno}
 	</update>
+	
+	<select id="totalHitcount" resultType="int">
+		SELECT SUM(hitcount)
+		FROM board
+	</select>
 
 
 </mapper>

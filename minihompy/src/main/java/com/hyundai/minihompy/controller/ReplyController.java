@@ -3,6 +3,9 @@ package com.hyundai.minihompy.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,7 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.hyundai.minihompy.domain.MemberDTO;
 import com.hyundai.minihompy.domain.ReplyDTO;
+import com.hyundai.minihompy.service.MemberService;
 import com.hyundai.minihompy.service.ReplyService;
 
 import lombok.extern.log4j.Log4j2;
@@ -24,6 +29,9 @@ public class ReplyController {
 	
 	@Autowired
 	private ReplyService replyService;
+	
+	@Autowired
+	private MemberService memberService;
 	
 	@GetMapping("/{bno}")
 	public List<ReplyDTO> list(@PathVariable("bno") int bno) {
@@ -38,11 +46,14 @@ public class ReplyController {
 		return list;
 	}
 	
+	@PreAuthorize("hasAuthority('USER')")
 	@PostMapping("")
-	public String insert(@RequestBody ReplyDTO dto) {
+	public String insert(@RequestBody ReplyDTO dto, @AuthenticationPrincipal User authentication) {
 		try {
-			dto.setId("user1");
-			dto.setReplyer("김땡땡");
+			log.info(authentication.getAuthorities());
+			dto.setId(authentication.getUsername());
+			MemberDTO memberDTO = this.memberService.findById(authentication.getUsername(), 0);
+			dto.setReplyer(memberDTO.getName());
 			replyService.insert(dto);
 			return "SUCCESS";
 		} catch (Exception e) {
@@ -51,9 +62,13 @@ public class ReplyController {
 		}
 	}
 	
+	@PreAuthorize("hasAuthority('USER')")
 	@RequestMapping(value = "/{rno}", method = { RequestMethod.PUT, RequestMethod.PATCH })
-	public String update(@PathVariable("rno") int rno, @RequestBody ReplyDTO dto) {
+	public String update(@PathVariable("rno") int rno, @RequestBody ReplyDTO dto, @AuthenticationPrincipal User authentication) {
 		try {
+			dto.setId(authentication.getUsername());
+			MemberDTO memberDTO = this.memberService.findById(authentication.getUsername(), 0);
+			dto.setReplyer(memberDTO.getName());
 			dto.setRno(rno);
 			replyService.update(dto);
 			return "SUCCESS";
@@ -63,6 +78,7 @@ public class ReplyController {
 		}
 	}
 	
+	@PreAuthorize("hasAuthority('USER')")
 	@DeleteMapping("/{rno}")
 	public String delete(@PathVariable("rno") int rno) {
 		try {

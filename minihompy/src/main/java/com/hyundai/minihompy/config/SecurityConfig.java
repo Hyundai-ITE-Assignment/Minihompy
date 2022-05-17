@@ -1,22 +1,24 @@
 package com.hyundai.minihompy.config;
 
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler;
+
 import com.hyundai.minihompy.security.jwt.JwtAccessDeniedHandler;
 import com.hyundai.minihompy.security.jwt.JwtAuthenticationEntryPoint;
 import com.hyundai.minihompy.security.jwt.JwtSecurityConfig;
 import com.hyundai.minihompy.security.jwt.TokenProvider;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
 import lombok.extern.log4j.Log4j2;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @Log4j2
@@ -42,7 +44,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
+	
+	@Bean  //Role 등급
+	public RoleHierarchyImpl roleHierarchyImpl() {
+		log.info("roleHierarchyImpl 실행");
+		RoleHierarchyImpl roleHierarchyImpl = new RoleHierarchyImpl();
+		roleHierarchyImpl.setHierarchy("ADMIN > USER");
+		return roleHierarchyImpl;
+	}//end roleHierarchyImpl
 
+	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http
@@ -66,6 +77,23 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		
 			.and()
 			.apply(new JwtSecurityConfig(tokenProvider)); //Jwtfilter를 addFilterBefore로 등록했던 JwtSecurityConfig 클래스도 적용
+		
 
 	}
+	
+	@Override
+	public void configure(WebSecurity web) throws Exception {
+		log.info("configure(WebSecurity web) 실행");
+		DefaultWebSecurityExpressionHandler defaultWebSecurityExpressionHandler = 
+				new DefaultWebSecurityExpressionHandler();
+		defaultWebSecurityExpressionHandler.setRoleHierarchy(roleHierarchyImpl());	
+		web.expressionHandler(defaultWebSecurityExpressionHandler);
+		web.ignoring()
+		.antMatchers("/images/**")
+		.antMatchers("/css/**")
+		.antMatchers("/js/**")
+		.antMatchers("/bootstrap-4.6.0-dist/**")
+		.antMatchers("/jquery/**")
+		.antMatchers("/favicon.ico");		
+	}//end configure(WebSecurity web)
 }

@@ -1,60 +1,117 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th=http://www.thymeleaf.org
-	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <th:block th:replace="~{common/layout::setContent(~{this::content})}">
+	
 	<th:block th:fragment="content">
-		<!-- 게시물 목록 시작 -->
-		<h3 class="p-3">게시물 리스트</h3>
 
-		<table class="table table-bordered table-hover">
-			<tr>
-				<th>번호</th>
-				<th>제목</th>
-				<th>이름</th>
-				<th>날짜</th>
-				<th>조회수</th>
-			</tr>
+		<div id="div">
+			<!-- 게시물 목록 시작 -->
+			<h3 class="p-3">게시물 리스트</h3>
 
-			<!-- 동적으로 리스트 출력하는 부분 -->
+			<table class="table table-bordered table-hover">
+				<tr>
+					<th>번호</th>
+					<th>제목</th>
+					<th>이름</th>
+					<th>날짜</th>
+					<th>조회수</th>
+				</tr>
 
-			<tr th:if="${not #lists.isEmpty(list)}" th:each="dto: ${list}">
-				<td th:text="${dto.bno}" />
-				<td><a th:href="@{/board/detail(bno=${dto.bno})}"
-					th:text="${dto.title}" /></td>
-				<td th:text="${dto.name}" />
-				<td th:text="${#calendars.format(dto.regdate, 'yyyy-MM-dd')}" />
-				<td th:text="${dto.hitcount}" />
-			</tr>
-		</table>
-		<br />
-		<div class="pb-5">
-			<a href="/board/insert" class="btn btn-info float-right btn-lg btn-sm mr-2">글쓰기</a>
-		</div>
+				<!-- 동적으로 리스트 출력하는 부분 -->
 
-		<div class="container row" style="float: none; margin:100 auto;">
-			<div class="col-md-3" style="float: none; margin:0 auto;">
-			<ul class="pagination">
-				<li th:if="${pager.startPageNo != 1}"><a
-					th:href="@{/board(pageNo=${pager.startPageNo - 1})}" class="m-3"
-					style="font-size: 1.6rem"> &laquo; </a></li>
-				<th:block
-					th:with="start = ${pager.startPageNo}, end = ${pager.endPageNo}">
-					<li class="page-item"
-						th:with="start = ${pager.startPageNo}, end = ${pager.endPageNo}"
-						th:each="pageButton : ${#numbers.sequence(start, end)}"><a
-						class="page-link"
-						th:href="@{/board?pageNo={page} (page = ${pageButton})}"
-						th:text=${pageButton}></a></li>
-				</th:block>
-				<li th:if="${pager.endPageNo != pager.totalPageNo}"><a
-					th:href="@{/board(pageNo=${pager.endPageNo + 1})}" class="m-3"
-					style="font-size: 1.6rem"> &raquo; </a></li>
-
-			</ul>
+				<tr th:if="${not #lists.isEmpty(list)}" th:each="dto: ${list}">
+					<td th:text="${dto.bno}" />
+					<td><a th:href="'javascript:goDetail(' + ${dto.bno} + ');'" th:text="${dto.title}"></a></td>
+					<td th:text="${dto.name}" />
+					<td th:text="${#calendars.format(dto.regdate, 'yyyy-MM-dd')}" />
+					<td th:text="${dto.hitcount}" />
+				</tr>
+			</table>
+			<br />
+			<!-- ADMIN만 게시판 글쓰기 보이게 수정 -->
+			<div sec:authorize="hasAuthority('ADMIN')" class="pb-5">
+				<a href="/board/insert"
+					class="btn btn-info float-right btn-lg btn-sm mr-2">글쓰기</a>
 			</div>
-		</div>
-		<!-- 게시물 목록 끝 -->
 
+			<div class="container row" style="float: none; margin: 100 auto;">
+				<div class="col-md-3" style="float: none; margin: 0 auto;">
+					<ul class="pagination" th:if="${pager.totalPageNo != 0}">
+						<li th:if="${pager.startPageNo != 1}"><a
+							th:onclick="'javascript:goPrevPage(' + ${pager.startPageNo - 1} + ');'" class="m-3"
+							style="font-size: 1.6rem"> &laquo; </a></li>
+						<th:block
+							th:with="start = ${pager.startPageNo}, end = ${pager.endPageNo}">
+							<li class="page-item"
+								th:with="start = ${pager.startPageNo}, end = ${pager.endPageNo}"
+								th:each="pageButton : ${#numbers.sequence(start, end)}"><a
+								class="page-link" th:text=${pageButton}
+								th:onclick="'javascript:goPage(' + ${pageButton} + ');'" ></a></li>
+						</th:block>
+						<li th:if="${pager.endPageNo != pager.totalPageNo}"><a
+							th:onclick="'javascript:goNextPage(' + ${pager.endPageNo - 1} + ');'"  class="m-3"
+							style="font-size: 1.6rem"> &raquo; </a></li>
+
+					</ul>
+				</div>
+			</div>
+			<!-- 게시물 목록 끝 -->
+		</div>
+		<script th:inline="javascript">
+			function goDetail(bno) {
+				var token = sessionStorage.getItem("jwt");
+
+				var form = document.createElement("form");
+				form.action = "/board/detail";
+				form.method = "POST";
+				form.innerHTML = "<input name='Authorization' value='" + "`Bearer" + token + "`'>";
+				form.innerHTML += "<input name='bno' value='" + bno + "'>";
+				document.body.append(form);
+
+				form.submit();
+			}
+			function goPage(page) {
+				var token = sessionStorage.getItem("jwt");
+				
+				var form = document.createElement("form");
+				form.action = "/board";
+				form.method = "POST";
+				form.innerHTML = "<input name='Authorization' value='" + "`Bearer" + token + "`'>";
+				form.innerHTML += "<input name='pageNo' value='" + page + "'>";
+				document.body.append(form);
+
+				form.submit();
+			}
+
+			function goPrevPage(page) {
+				var token = sessionStorage.getItem("jwt");
+
+				var form = document.createElement("form");
+				form.action = "/board?pageNo=" + page;
+				form.method = "POST";
+				form.innerHTML = "<input name='Authorization' value='" + "`Bearer" + token + "`'>";
+				form.innerHTML += "<input name='pageNo' value='" + page + "'>";
+				document.body.append(form);
+
+				form.submit();
+			}
+
+			function goNextPage(page) {
+				var token = sessionStorage.getItem("jwt");
+				
+				var form = document.createElement("form");
+				form.action = "/board?pageNo=" + page;
+				form.method = "POST";
+				form.innerHTML = "<input name='Authorization' value='" + "`Bearer" + token + "`'>";
+				form.innerHTML += "<input name='pageNo' value='" + page + "'>";
+				document.body.append(form);
+
+				form.submit();
+			}
+		</script>
+		
 	</th:block>
 </th:block>
 </html>

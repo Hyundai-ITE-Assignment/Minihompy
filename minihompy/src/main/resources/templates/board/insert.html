@@ -44,6 +44,21 @@
 					</div>
 				</form>
 				<script th:inline="javascript">
+				
+				// 게시글로 이동
+				function goDetail(bno) {
+					var token = sessionStorage.getItem("jwt");
+
+					var form = document.createElement("form");
+					form.action = "/board/detail";
+					form.method = "POST";
+					form.innerHTML = "<input name='Authorization' value='" + "`Bearer" + token + "`'>";
+					form.innerHTML += "<input name='bno' value='" + bno + "'>";
+					document.body.append(form);
+
+					form.submit();
+				}
+				
 				function createBoard() {
 					const title = $("#boardInsertForm [name=title]").val();
 					const content = $("#boardInsertForm [name=content]").val();
@@ -61,7 +76,7 @@
 					
 					$.ajax({
 						url: "[(@{/board/insert})]",
-						/* headers: {Authorization:`Bearer ${sessionStorage.getItem("jwt")}`}, */
+						headers: {Authorization:`Bearer ${sessionStorage.getItem("jwt")}`},
 						method: "post",
 						data: formData,
 						processData: false,
@@ -70,7 +85,7 @@
 					}).done((data) => {
 						console.log(data);
 						var bno = data.bno;
-						window.location.href = '/board/detail?bno=' + bno;
+						goDetail(bno);
 					});
 				}
 			</script>

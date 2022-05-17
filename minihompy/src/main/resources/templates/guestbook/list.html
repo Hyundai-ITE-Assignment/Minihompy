@@ -6,29 +6,27 @@
 		<!-- 방명록 목록 시작 -->
 		<h3 class="p-3">방명록 리스트</h3>
 
-		<div class="row text-center" width="100%" style="margin:0 auto">
+		<div class="row text-center" width="100%" style="margin: 0 auto">
 			<div class="col-md-3 m-1" id="id">
-				<img th:src="@{/images/profile_img.png}" width="100%"
-					class="d-inline-block center-block">
-				김땡땡
+				<img th:src="@{/images/mini.jpg}" width="100%"
+					class="d-inline-block center-block"> [[${user}]]
 			</div>
-			<textarea class="col-md-7" name="booktext"
-				id='newBookText' rows=10></textarea>
-			<button class="btn btn-info col-md-1 ml-3"
-				id="bookAddBtn">등록</button>
+			<textarea class="col-md-7" name="booktext" id='newBookText' rows=10></textarea>
+			<button class="btn btn-info col-md-1 ml-3" id="bookAddBtn">등록</button>
 		</div>
 
 		<!-- 방명록 리스트 -->
-		<ul id="books" class="mt-5" th:if="${not #lists.isEmpty(list)}" th:each="dto: ${list}"
+		<ul id="books" class="mt-5" th:if="${not #lists.isEmpty(list)}"
+			th:each="dto: ${list}"
 			style="list-style-type: none; font-size: 1.1rem">
 			<li id="item">
-				<div class="row pt-3 pb-3"  style="background-color: #E0E0E0">
+				<div class="row pt-3 pb-3" style="background-color: #E0E0E0">
 					<div class="col-md-7">
-						No.<span id="gno" th:text="${dto.gno}"></span>  [[${dto.name}]]
-						<span> ([[${#calendars.format(dto.regdate, 'yyyy-MM-dd HH:mm:ss')}]]) </span>
+						No.<span id="gno" th:text="${dto.gno}"></span><span id="gname" class="ml-1" th:text="${dto.name}"></span><span>
+							([[${#calendars.format(dto.regdate, 'yyyy-MM-dd HH:mm:ss')}]]) </span>
 					</div>
-					<div class="col-md-5">
-						<div class="float-right">
+					<div class="col-md-5" th:if="${user} == ${dto.name}">
+						<div class="float-right" id="modDiv">
 							<button onclick="updateBook(this)" id="bookUpdateBtn">수정</button>
 							<button onclick="deleteBook(this)" id="bookDeleteBtn">삭제</button>
 						</div>
@@ -36,7 +34,7 @@
 				</div>
 				<div class="row p-3 bg-light">
 					<img th:src="@{/images/mini.jpg}"
-					class="d-inline-block center-block col-md-3">
+						class="d-inline-block center-block col-md-3">
 					<div class="p-3 col-md-8" id="bookContent" th:text="${dto.content}"></div>
 				</div>
 			</li>
@@ -44,7 +42,7 @@
 
 		<div class="container row" style="float: none; margin: 100 auto;">
 			<div class="col-md-3" style="float: none; margin: 0 auto;">
-				<ul class="pagination">
+				<ul class="pagination" th:if="${pager.totalPageNo != 0}">
 					<li th:if="${pager.startPageNo != 1}"><a
 						th:href="@{/guestbook(pageNo=${pager.startPageNo - 1})}"
 						class="m-3" style="font-size: 1.6rem"> &laquo; </a></li>
@@ -64,9 +62,9 @@
 			</div>
 		</div>
 		<!-- 방명록 리스트 끝 -->
-	
+
 		<script th:inline="javascript">
-			  
+				
 			  // 방명록 추가
 			  $("#bookAddBtn").on("click", function() {
 				  const bookText = $("#newBookText").val();
@@ -75,7 +73,7 @@
 				  formData.append("content", bookText);
 				  $.ajax({
 						url: "[(@{/guestbook/insert})]",
-						/* headers: {Authorization:`Bearer ${sessionStorage.getItem("jwt")}`}, */
+						headers: {Authorization:`Bearer ${sessionStorage.getItem("jwt")}`},
 						method: "post",
 						data: formData,
 						processData: false,
@@ -83,7 +81,7 @@
 						cache: false
 					}).done((data) => {
 						console.log(data);
-						window.location.href = '/guestbook';
+						location.reload();
 					});
 			  })
 			  
@@ -120,6 +118,7 @@
 				formData.append("content", newContent);
 				  $.ajax({
 						url: "[(@{/guestbook/update})]",
+						headers: {Authorization:`Bearer ${sessionStorage.getItem("jwt")}`},
 						method: "put",
 						data : formData,
 						processData: false,
@@ -127,7 +126,7 @@
 						cache: false
 					}).done((data) => {
 						console.log(data.bno);
-						window.location.href = '/guestbook?pageNo=1';
+						location.reload();
 					});
 			  }
 			  
@@ -138,6 +137,7 @@
 				  var gno = li.find("#gno").text();
 				  $.ajax({
 					  	url : "[(@{/guestbook/})]" + gno,
+					  	headers: {Authorization:`Bearer ${sessionStorage.getItem("jwt")}`},
 					  	method: "delete",
 						processData: false,
 						contentType: false,
@@ -145,7 +145,7 @@
 					}).done((data) => {
 						console.log(data);
 						alert("삭제되었습니다.");
-						window.location.href = '/guestbook?pageNo=1';
+						location.reload();
 					});
 			  }
 			  

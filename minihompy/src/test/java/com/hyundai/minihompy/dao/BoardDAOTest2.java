@@ -24,7 +24,6 @@ public class BoardDAOTest2 {
 			dto.setName("name2");
 			dto.setTitle("title1");
 			dto.setContent("content1");
-			dto.setPassword("1234");
 			
 			log.info(dto);
 			boardDAO.insert(dto);

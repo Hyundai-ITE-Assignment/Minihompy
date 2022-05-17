@@ -35,6 +35,19 @@
 					</div>
 				</form>
 				<script th:inline="javascript">
+				function goDetail(bno) {
+					var token = sessionStorage.getItem("jwt");
+
+					var form = document.createElement("form");
+					form.action = "/board/detail";
+					form.method = "POST";
+					form.innerHTML = "<input name='Authorization' value='" + "`Bearer" + token + "`'>";
+					form.innerHTML += "<input name='bno' value='" + bno + "'>";
+					document.body.append(form);
+
+					form.submit();
+				}
+				
 				function updateBoard() {
 					const bno = $("#boardUpdateForm [name=bno]").val();
 					const title = $("#boardUpdateForm [name=title]").val();
@@ -49,7 +62,7 @@
 					
 					$.ajax({
 						url: "[(@{/board/update})]",
-						// headers: {Authorization:`Bearer ${sessionStorage.getItem("jwt")}`},
+						headers: {Authorization:`Bearer ${sessionStorage.getItem("jwt")}`},
 						//multipart/form-data 인코딩된 데이터는 반드시 POST 방식으로 처리(PUT 방식이 아님)
 						method: "post",
 						data: formData,
@@ -58,7 +71,7 @@
 						cache: false
 					}).done((data) => {
 						console.log(data.bno);
-						window.location.href = '/board/detail?bno=' + data.bno;
+						goDetail(bno);
 					});
 				}
 			</script>

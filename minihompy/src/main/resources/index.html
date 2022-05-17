@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th=http://www.thymeleaf.org
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<th:block th:replace="~{common/layout::setContent(~{this::content})}">
+	<th:block th:replace="~{common/layout::target(~{this::#hitcounts},~{this::#member})}"></th:block>
+	<th:block th:fragment="content">
+		<input type="hidden" id="hitcounts" value="${hitcounts}"/>
+		<input type="hidden" id="member" value="${member}"/>
+		<img th:src="@{/images/dotori.png}" width="30" height="35" class="m-1">
+		<span id="dotoriCnt" th:text=${member.dotori}></span>
+		<a th:href="@{/dotori}" class="btn">충전</a>
+		<img th:src="@{/images/home4.png}" width="100%" height="100%" class="float-center pt-3">
+	</th:block>
+	
+</th:block>
+</html>

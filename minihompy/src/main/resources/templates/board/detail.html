@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th=http://www.thymeleaf.org
-	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <th:block th:replace="~{common/layout::setContent(~{this::content})}">
 	<th:block th:fragment="content">
 		<style>
@@ -63,18 +64,18 @@
 			<div>
 				<div th:utext="${boardDTO.content}"></div>
 			</div>
-			<br /> <a class="btn btn-info" th:href="@{/board?pageNo=1}"
-				th:text="목록으로"></a>
+			<br /> <a class="btn btn-info" onclick="goBoard()" th:text="목록으로"></a>
 			<div class="float-right">
-				<a class="btn btn-info"
+				<a sec:authorize="hasAuthority('ADMIN')" class="btn btn-info"
 					th:href="@{/board/update(bno=${boardDTO.bno})}" th:text="수정"></a> <a
-					class="btn btn-info" href="javascript:deleteBoard()" th:text="삭제"></a>
+					sec:authorize="hasAuthority('ADMIN')" class="btn btn-info"
+					href="javascript:deleteBoard()" th:text="삭제"></a>
 			</div>
 			<br /> <br />
 			<hr>
 			<h4 class="mt-5">Reply</h4>
 			<div class="row">
-				<div class="col-md-3">김땡땡</div>
+				<div id="user" class="col-md-3"></div>
 				<textarea class="col-md-6 float-right" name="replytext"
 					id='newReplyText'></textarea>
 				<button class="btn btn-info col-md-2 ml-3 float-right"
@@ -111,6 +112,18 @@
 					if(fileName != "") {
 						showUploadedImages(fileName);
 					}
+					
+					$.ajax({
+						url: "[(@{/members/info})]",
+						headers: {Authorization:`Bearer ${sessionStorage.getItem("jwt")}`},
+						method: "get",
+						processData: false,
+						contentType: false,
+						cache: false
+					}).done((data) => {
+						console.log(data);		
+						$("#user").text(data.name);
+					});
 				});
 				
 				// 첨부파일 띄우기
@@ -127,7 +140,7 @@
 				function deleteBoard() {
 					$.ajax({
 						url: "[(@{/board/})]" + $(".bno").text(),
-						// headers: {Authorization:`Bearer ${sessionStorage.getItem("jwt")}`},
+						headers: {Authorization:`Bearer ${sessionStorage.getItem("jwt")}`},
 						method: "delete",
 						processData: false,
 						contentType: false,
@@ -135,8 +148,21 @@
 					}).done((data) => {
 						console.log(data);
 						alert("삭제되었습니다.");
-						window.location.href = '/board?pageNo=1';
+						goBoard();
 					});
+				}
+				
+				// 목록으로 버튼 눌렀을 때
+				function goBoard() {
+					var token = sessionStorage.getItem("jwt");
+					
+					var form = document.createElement("form");
+					form.action = "/board";
+					form.method = "POST";
+					form.innerHTML = "<input name='Authorization' value='" + "`Bearer" + token + "`'>";
+					document.body.append(form);
+					
+					form.submit();
 				}
 			</script>
 
@@ -156,28 +182,37 @@
 					function() {
 						rd = new Date(this.regdate);
 						date = rd.getFullYear() + "년 " + (rd.getMonth()+1) + "월 " + rd.getDate() + "일 " + rd.getHours() + "시 " + rd.getMinutes() + "분 " + rd.getSeconds() + "초 " +  '일월화수목금토'.charAt(rd.getUTCDay())+'요일';
-						str += "<li data-rno='"+this.rno+"' class='replyLi'><div class='row'>"
-							+ this.replyer + " : " + "<div class='replyDiv pl-1 pr-5'>" + this.replytext + "</div><div class='text-secondary'>" + date
-							+ "</div><a class='ml-3 text-dark'>수정</a></div></li>";
+						str += "<li data-rno='"+this.rno+"' class='replyLi'><div class='row'><span id='replyer'>"
+							+ this.replyer + "</span>  : " + "<div class='replyDiv pl-1 pr-5'>" + this.replytext + "</div><div class='text-secondary'>" + date
+							+ "</div>";
+						
+						// 현재 유저와 댓글을 입력한 유저가 같을 때만 모달창 show
+						var user = $("#user").text();
+						var replyer = this.replyer;
+						if(user == replyer) {
+							str += "<a class='ml-3 text-dark'>수정</a></div></li>";
+						} else {
+							str += "</div></li>";
+						}
 					});
 					console.log(str);
 					$("#replies").html(str);
 				});
 				
-				$("#newReplyWriter").val('');
 				$("#newReplyText").val('');
 			  }
 			  
 			  // 댓글 추가
 			  $("#replyAddBtn").on("click", function() {
-				  var replyer = $("#newReplyWriter").val();
+				  var replyer = $("#replyer").val();
 				  var replytext = $("#newReplyText").val();
 				  $.ajax({
 					  type : 'post',
 					  url : '/replies',
 					  headers : {
 						  "Content-Type" : "application/json",
-						  "X-HTTP-Method-Override" : "POST"
+						  "X-HTTP-Method-Override" : "POST",
+						  Authorization:`Bearer ${sessionStorage.getItem("jwt")}`
 					  },
 					  dataType : 'text',
 					  data : JSON.stringify({
@@ -194,16 +229,19 @@
 				  });
 			  })
 			  
-			  // 댓글 수정
+			  // 댓글 수정/삭제 모달창 show
 			  $("#replies").on("click", ".replyLi a", function() {
+				  
 				  var reply = $(this).parent().parent(); // li
 				  var rno = reply.attr("data-rno"); // li의 data-rno
 				  var replytext = reply.find("div:eq(0)").find("div:eq(0)").text();
 				  $(".modal-title").text(rno);
 				  $("#replytext").val(replytext);
 				  $("#modDiv").show("slow");
+				  
 			  })
 			  
+			  // 댓글 수정 눌렀을 때
 			  $("#replyModBtn").on("click", function() {
 				  var rno = $(".modal-title").html();
 				  var replytext = $("#replytext").val();
@@ -212,7 +250,8 @@
 					  url : '/replies/' + rno,
 					  headers : {
 						  "Content-Type" : "application/json",
-						  "X-HTTP-Method-Override" : "PUT"
+						  "X-HTTP-Method-Override" : "PUT",
+						  Authorization:`Bearer ${sessionStorage.getItem("jwt")}`
 					  },
 					  dataType : 'text',
 					  data : JSON.stringify({
@@ -229,7 +268,7 @@
 			  })
 			  
 			  
-			  // 댓글 삭제
+			  // 댓글 삭제 눌렀을 때
 			  $("#replyDelBtn").on("click", function() {
 				  var rno = $(".modal-title").html();
 				  var replytext = $("#replytext").val();
@@ -238,7 +277,8 @@
 					  url : '/replies/' + rno,
 					  headers : {
 						  "Content-Type" : "application/json",
-						  "X-HTTP-Method-Override" : "DELETE"
+						  "X-HTTP-Method-Override" : "DELETE",
+						  Authorization:`Bearer ${sessionStorage.getItem("jwt")}`
 					  },
 					  dataType : 'text',
 					  success : function(result) {
@@ -251,6 +291,7 @@
 				  });
 			  })
 			  
+			  // 모달창 닫기
 			  $("#closeBtn").on("click", function() {
 				  $("#modDiv").hide("slow");
 			  });

@@ -22,7 +22,6 @@ public class BoardServiceTest2 {
 			dto.setName("name2");
 			dto.setTitle("title1");
 			dto.setContent("content1");
-			dto.setPassword("1234");
 			
 			log.info(dto);
 			boardService.insert(dto);

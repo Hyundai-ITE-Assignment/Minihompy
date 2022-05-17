@@ -22,7 +22,6 @@ public class BoardServiceTest3 {
 			dto.setName("name2");
 			dto.setTitle("title1 수정");
 			dto.setContent("content1 수정");
-			dto.setPassword("1234");
 			
 			log.info(dto);
 			boardService.update(dto);

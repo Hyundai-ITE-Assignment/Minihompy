@@ -87,6 +87,19 @@ public class BoardServiceImpl implements BoardService {
 		
 	}
 
+	@Override
+	public int totalHitcount(String id) throws Exception {
+		int total = 0;
+		try {
+			total = boardDAO.totalHitcount(id);
+		} catch (Exception e) {
+			log.info(e.getMessage());
+			throw e;
+		}
+		
+		return total;
+	}
+
 	
 
 }

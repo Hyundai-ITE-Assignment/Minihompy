@@ -11,6 +11,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -22,7 +25,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.hyundai.minihompy.domain.BoardDTO;
+import com.hyundai.minihompy.domain.MemberDTO;
 import com.hyundai.minihompy.service.BoardService;
+import com.hyundai.minihompy.service.MemberService;
 
 import lombok.extern.log4j.Log4j2;
 import net.coobird.thumbnailator.Thumbnailator;
@@ -34,20 +39,24 @@ public class BoardController {
 
 	@Autowired
 	private BoardService boardService;
-
+	
+	@Autowired
+	private MemberService memberService;
+	
 	// application.properties 변수
 	@Value("${com.hyundai.minihompy.upload.path}")
 	private String uploadPath;
 
 	// 게시글 작성
+	@PreAuthorize("hasAuthority('ADMIN')")
 	@PostMapping("/insert")
-	public BoardDTO insert(BoardDTO boardDTO, Model model) throws Exception {
+	public BoardDTO insert(BoardDTO boardDTO, Model model, @AuthenticationPrincipal User authentication) throws Exception {
 		log.info(boardDTO.toString());
 
 		try {
-			boardDTO.setId("user1");
-			boardDTO.setName("김땡땡");
-			boardDTO.setPassword("1234");
+			boardDTO.setId(authentication.getUsername());
+			MemberDTO memberDTO = memberService.findById(authentication.getUsername(), 0);
+			boardDTO.setName(memberDTO.getName());
 
 			// 게시글 내용 개행 치환 처리
 			String contents = boardDTO.getContent().replace("\r\n", "<br>");
@@ -78,14 +87,15 @@ public class BoardController {
 			throw e;
 		}
 	}
-
+	
 	// 게시글 수정
+	@PreAuthorize("hasAuthority('ADMIN')")
 	@PostMapping("/update")
-	public BoardDTO update(BoardDTO boardDTO, Model model) throws Exception {
+	public BoardDTO update(BoardDTO boardDTO, @AuthenticationPrincipal User authentication) throws Exception {
 		try {
-			boardDTO.setId("user");
-			boardDTO.setName("유저1");
-			boardDTO.setPassword("1234");
+			boardDTO.setId(authentication.getUsername());
+			MemberDTO memberDTO = memberService.findById(authentication.getUsername(), 0);
+			boardDTO.setName(memberDTO.getName());
 
 			// 게시글 내용 개행 치환 처리
 			String contents = boardDTO.getContent().replace("\r\n", "<br>");
@@ -116,6 +126,7 @@ public class BoardController {
 	}
 
 	// 게시글 삭제
+	@PreAuthorize("hasAuthority('ADMIN')")
 	@DeleteMapping("/{bno}")
 	public Map<String, String> delete(@PathVariable long bno, Model model) throws Exception {
 		try {
@@ -128,7 +139,7 @@ public class BoardController {
 			throw e;
 		}
 	}
-
+	
 	@GetMapping("/display")
 	public ResponseEntity<byte[]> getFile(String fileName) {
 		ResponseEntity<byte[]> result = null;

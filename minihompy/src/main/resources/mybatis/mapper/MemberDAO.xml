@@ -63,6 +63,13 @@
   <delete id="deleteMemberRole">
     delete from member_role where member_id = #{member_id}
   </delete>
+  
+  <update id="addDotori">
+    update member
+    set dotori = dotori + 10
+    where id = #{id}
+  </update>
+  
 </mapper>
 
 

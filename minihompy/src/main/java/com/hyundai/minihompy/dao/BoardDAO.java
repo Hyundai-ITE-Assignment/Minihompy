@@ -25,4 +25,5 @@ public interface BoardDAO {
 	
 	public int updateHitcount(long bno) throws SQLException;
 	
+	public int totalHitcount(String id) throws SQLException;
 }
