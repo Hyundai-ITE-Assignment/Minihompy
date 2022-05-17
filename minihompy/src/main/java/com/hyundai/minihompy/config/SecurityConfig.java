@@ -86,8 +86,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		
 			.and()
 			.apply(new JwtSecurityConfig(tokenProvider)); //Jwtfilter를 addFilterBefore로 등록했던 JwtSecurityConfig 클래스도 적용
-		
-
 	}
 
 	//권한 예외처리 추가

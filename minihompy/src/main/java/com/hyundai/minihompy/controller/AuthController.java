@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 /*************************************************************
  파일명: AuthController.java
  기능: 토큰 발급 Controller
- 작성자: 유지훈, 박주영
+ 작성자: 유지훈
 
  [코멘트: 회원별 토큰을 발급받을 수 있다.]
  *************************************************************/
@@ -41,23 +41,21 @@ public class AuthController {
     this.authenticationManagerBuilder = authenticationManagerBuilder;
   }
 
+  //회원 로그인할때 토큰 생성을 해준다.
   @PostMapping("/authenticate")
   public Map<String, String> authorize(@RequestBody LoginDto loginDto) {
-
-    log.info("==============찾으려는 회원 아이디 : "+loginDto.getUsername()+"==========================");
-    log.info("==============찾으려는 비밀번호 : "+loginDto.getPassword()+"==========================");
 
     UsernamePasswordAuthenticationToken authenticationToken =
       new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword());
 
+    //권한 조회
     Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
     SecurityContextHolder.getContext().setAuthentication(authentication);
 
+    //토큰 생성
     String jwt = tokenProvider.createToken(authentication);
 
-//    HttpHeaders httpHeaders = new HttpHeaders();
-//    httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + jwt);
-
+    //토큰 담기
     Map<String, String> map = new HashMap<>();
     map.put("result", "success");
     map.put("id", loginDto.getUsername());
