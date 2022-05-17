@@ -171,6 +171,18 @@ public class WebController {
 		return "member/login";
 	}
 
+	@GetMapping(path = "/members/info")
+	public String memberInfo(@AuthenticationPrincipal
+		User authentication,
+		Model model
+	){
+		log.info("로그인한 아이디 : "+authentication.getUsername());
+		MemberDTO memberDTO = this.memberService.findById(authentication.getUsername(), 0);
+		model.addAttribute("memberDTO", memberDTO);
+		log.info(memberDTO);
+		return "member/info";
+	}
+
 	@GetMapping("/members/signup")
 	public String getSignupPage() {
 		return "member/signup";
@@ -180,5 +192,4 @@ public class WebController {
 	public String getLogin() {
 		return "member/login";
 	}
-
 }

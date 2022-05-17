@@ -1,32 +1,30 @@
 package com.hyundai.minihompy.dao;
 
 import com.hyundai.minihompy.domain.MemberDTO;
+import com.hyundai.minihompy.domain.MemberRoleSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Log4j2
 @SpringBootTest
-public class MemberDAOTest1 {
+public class MemberDAOTest3 {
 
   @Autowired
   private MemberDAO memberDAO;
 
   @Test
-  public void insertMemberTest(){
+  public void insertMemberRoleSetTest(){
     try{
-      MemberDTO memberDTO = new MemberDTO();
-      memberDTO.setId("dotori123");
-      memberDTO.setPassword("1234");
-      memberDTO.setRegdate(LocalDate.now());
-      memberDTO.setEmail("dotori@naver.com");
+      MemberRoleSet memberRoleSet = new MemberRoleSet();
+      memberRoleSet.setMember_id("dotori123");
+      memberRoleSet.setRole_set("ADMIN");
 
-      log.info(memberDTO);
-      memberDAO.insertMember(memberDTO);
+      memberDAO.insertMemberRoleSet(memberRoleSet);
+      log.info(memberRoleSet);
     } catch (SQLException throwables) {
       throwables.printStackTrace();
     }
