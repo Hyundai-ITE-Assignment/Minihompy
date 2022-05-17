@@ -48,15 +48,13 @@ public class AuthController {
 
     String jwt = tokenProvider.createToken(authentication);
 
-    HttpHeaders httpHeaders = new HttpHeaders();
-    httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + jwt);
+//    HttpHeaders httpHeaders = new HttpHeaders();
+//    httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + jwt);
 
     Map<String, String> map = new HashMap<>();
     map.put("result", "success");
     map.put("id", loginDto.getUsername());
     map.put("jwt", jwt);
-
     return map;
   }
-
 }

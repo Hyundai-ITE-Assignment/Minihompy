@@ -7,26 +7,23 @@ import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Log4j2
 @SpringBootTest
-public class MemberDAOTest1 {
+public class MemberDAOTest2 {
 
   @Autowired
   private MemberDAO memberDAO;
 
   @Test
-  public void insertMemberTest(){
+  public void updateMemberTest(){
     try{
-      MemberDTO memberDTO = new MemberDTO();
-      memberDTO.setId("dotori123");
-      memberDTO.setPassword("1234");
-      memberDTO.setRegdate(LocalDate.now());
-      memberDTO.setEmail("dotori@naver.com");
+      MemberDTO updateMember = new MemberDTO();
+      updateMember.setName("뉴지훈");
+      updateMember.setEmail("update@naver.com");
+      updateMember.setModdate(LocalDate.now());
 
-      log.info(memberDTO);
-      memberDAO.insertMember(memberDTO);
+      memberDAO.updateMember(updateMember);
     } catch (SQLException throwables) {
       throwables.printStackTrace();
     }
