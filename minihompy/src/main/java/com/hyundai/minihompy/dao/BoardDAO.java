@@ -8,6 +8,13 @@ import org.apache.ibatis.annotations.Mapper;
 import com.hyundai.minihompy.domain.BoardDTO;
 import com.hyundai.minihompy.domain.Pager;
 
+/*************************************************************
+파일명: BoardDAO.java
+기능: 게시판 관련 DAO
+작성자: 박주영
+
+[코멘트: X]
+*************************************************************/
 @Mapper
 public interface BoardDAO {
 	
@@ -25,5 +32,5 @@ public interface BoardDAO {
 	
 	public int updateHitcount(long bno) throws SQLException;
 	
-	public int totalHitcount(String id) throws SQLException;
+	public int totalHitcount() throws SQLException;
 }

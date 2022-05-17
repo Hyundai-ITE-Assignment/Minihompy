@@ -15,16 +15,18 @@ import com.hyundai.minihompy.service.MemberService;
 
 import lombok.extern.slf4j.Slf4j;
 
+/*************************************************************
+파일명: HomeController.java
+기능: 메인화면으로 이동
+작성자: 박주영, 유지훈
+
+[코멘트: X]
+*************************************************************/
 @Controller
 @Slf4j
 public class HomeController {
 	
-	@Autowired
-	MemberService memberService;
-	
-	@Autowired
-	BoardService boardService;
-	
+	// 실행 시 home.html로 이동
 	@RequestMapping("/")
 	public String home(Model model) {
 		log.info("home 실행");
@@ -32,9 +34,7 @@ public class HomeController {
 		return "home";
 	}
 	
-	
-	
-}//end class
+}
 
 
 

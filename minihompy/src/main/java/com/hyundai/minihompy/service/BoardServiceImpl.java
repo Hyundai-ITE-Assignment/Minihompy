@@ -11,6 +11,13 @@ import com.hyundai.minihompy.domain.Pager;
 
 import lombok.extern.log4j.Log4j2;
 
+/*************************************************************
+파일명: BoardServiceImpl.java
+기능: 게시글 관련 Service
+작성자: 박주영
+
+[코멘트: X]
+*************************************************************/
 @Service
 @Log4j2
 public class BoardServiceImpl implements BoardService {
@@ -88,10 +95,10 @@ public class BoardServiceImpl implements BoardService {
 	}
 
 	@Override
-	public int totalHitcount(String id) throws Exception {
+	public int totalHitcount() throws Exception {
 		int total = 0;
 		try {
-			total = boardDAO.totalHitcount(id);
+			total = boardDAO.totalHitcount();
 		} catch (Exception e) {
 			log.info(e.getMessage());
 			throw e;

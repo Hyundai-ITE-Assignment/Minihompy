@@ -1,11 +1,17 @@
 package com.hyundai.minihompy.service;
 
-import java.sql.SQLException;
 import java.util.List;
 
 import com.hyundai.minihompy.domain.BoardDTO;
 import com.hyundai.minihompy.domain.Pager;
 
+/*************************************************************
+파일명: BoardService.java
+기능: 게시글 관련 Service 인터페이스
+작성자: 박주영
+
+[코멘트: X]
+*************************************************************/
 public interface BoardService {
 	
 	public List<BoardDTO> getList(Pager pager) throws Exception;
@@ -22,5 +28,5 @@ public interface BoardService {
 	
 	public void updateHitcount(long bno) throws Exception;
 	
-	public int totalHitcount(String id) throws Exception;
+	public int totalHitcount() throws Exception;
 }

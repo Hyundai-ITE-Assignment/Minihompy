@@ -32,6 +32,13 @@ import com.hyundai.minihompy.service.MemberService;
 import lombok.extern.log4j.Log4j2;
 import net.coobird.thumbnailator.Thumbnailator;
 
+/*************************************************************
+파일명: BoardController.java
+기능: 게시글 작성, 수정, 삭제, 첨부파일 조회
+작성자: 박주영
+
+[코멘트: RESTful 방식, Ajax 사용, 'ADMIN'만 접근 가능]
+*************************************************************/
 @RestController
 @RequestMapping("/board")
 @Log4j2
